@@ -1,0 +1,6 @@
+{
+  "token": "<myapitoken>",
+  "start_date": "2018-01-01T00:00:00Z",
+  "metric": "team_table",
+  "incremental_range": "daily"
+}
