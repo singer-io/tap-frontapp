@@ -6,7 +6,11 @@ This tap:
 
 - Pulls raw data from FrontApp's [API](https://dev.frontapp.com/)
 - Extracts the following resources from FrontApp
+<<<<<<< HEAD
   - [Analytics](https://dev.frontapp.com/#analytics)
+=======
+  - [Analytics](https://dev.frontapp.com#analytics)
+>>>>>>> cleaned up http.py and added handling for when no data returned.
       - Hourly/Daily analytics of metrics
           - team_table
 - Outputs the schema for each resource
@@ -21,7 +25,7 @@ python3 ./setup.py install
 
 ## Configuration
 
-This tap requires a `config.json` which specifies details regarding [API authentication](https://dev.frontapp.com/#authentication), a cutoff date for syncing historical data, and a time period range [daily,hourly] to control what incremental extract date ranges are. See [config.sample.json](config.sample.json) for an example.
+This tap requires a `config.json` which specifies details regarding [API authentication](https://dev.frontapp.com/#authentication) by using a token, a cutoff date for syncing historical data (date format of YYYY-MM-DDTHH:MI:SSZ), and a time period range [daily,hourly] to control what incremental extract date ranges are. See [example.config.json](example.config.json) for an example.
 
 Create the catalog:
 
