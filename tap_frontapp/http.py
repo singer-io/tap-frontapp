@@ -50,27 +50,20 @@ class Client(object):
             endpoint = kwargs['endpoint']
             del kwargs['endpoint']
             with metrics.http_request_timer(endpoint) as timer:
-                #print(', '.join(['{}={!r}'.format(k, v) for k, v in kwargs.items()]))
                 response = requests.request(method, self.url(path), **kwargs)
-                #print('final url=',response.url)
                 timer.tags[metrics.Tag.http_status_code] = response.status_code
 
                 # frontapp's API takes an initial request then needs 1 sec to produce the report
                 #so here we just run the request again
-                #print('sleeping 2')
                 time.sleep(2)
                 response = requests.request(method, self.url(path), **kwargs)
-                #print('final2 url=',response.url)
-
 
         else:
             response = requests.request(method, self.url(path), **kwargs)
-            #print('final3 url=',response.url)
-            #print('sleeping2 2')
             time.sleep(2)
             response = requests.request(method, self.url(path), **kwargs)
-            #print('final4 url=',response.url)
 
+        #print('final3 url=',response.url)
         self.calls_remaining = int(response.headers['X-Ratelimit-Remaining'])
         self.limit_reset = int(float(response.headers['X-Ratelimit-Reset']))
 
@@ -83,8 +76,11 @@ class Client(object):
         except:
             LOGGER.error('{} - {}'.format(response.status_code, response.text))
             raise
-        #print('get data=',response.json()['metrics'][0]['rows'])
-        return response.json()['metrics'][0]['rows']
+
+        if len(response.json()['metrics']) > 0:
+            return response.json()['metrics'][0]['rows']
+        else:
+            return {}
 
     def get(self, path, **kwargs):
         return self.request('get', path, **kwargs)

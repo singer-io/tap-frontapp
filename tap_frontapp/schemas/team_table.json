@@ -5,7 +5,7 @@
     "properties": {
 	"analytics_date": {
 	    "type": ["null", "string"],
-	    "format": "date-time",
+	    "format": "date",
 	    "selected": true
 	},
 	"analytics_range": {
