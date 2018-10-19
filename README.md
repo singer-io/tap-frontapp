@@ -7,7 +7,11 @@ This tap:
 - Pulls raw data from FrontApp's [API](https://dev.frontapp.com/)
 - Extracts the following resources from FrontApp
 <<<<<<< HEAD
+<<<<<<< HEAD
   - [Analytics](https://dev.frontapp.com/#analytics)
+=======
+  - [Analytics](https://dev.frontapp.com#analytics)
+>>>>>>> cleaned up http.py and added handling for when no data returned.
 =======
   - [Analytics](https://dev.frontapp.com#analytics)
 >>>>>>> cleaned up http.py and added handling for when no data returned.
