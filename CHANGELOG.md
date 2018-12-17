@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.2
+  * Fix an issue that causes `discovery` mode to fail
+
 ## 1.0.1
   * Pin `singer-python` to version 5.4.0
   * Pin `backoff` to version 1.3.2
