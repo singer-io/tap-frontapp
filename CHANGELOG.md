@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.1
+  * Pin `singer-python` to version 5.4.0
+  * Pin `backoff` to version 1.3.2
+
 ## 1.0.0
   * General release of the tap
 
