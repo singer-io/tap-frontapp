@@ -6,7 +6,7 @@ This tap:
 
 - Pulls raw data from FrontApp's [API](https://dev.frontapp.com/)
 - Extracts the following resources from FrontApp
-  - [Analytics](https://dev.emarsys.com/v2/email-campaigns/list-email-campaigns)
+  - [Analytics](https://dev.frontapp.com/#analytics)
       - Hourly/Daily analytics of metrics
           - team_table
 - Outputs the schema for each resource
