@@ -42,7 +42,7 @@ Note that a typical state file looks like this:
 ```
 
 ---
-## FrontApp Replication
+## Replication
 
 With each run of the integration, the following data set is extracted and replicated to the data warehouse:
 
