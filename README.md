@@ -42,5 +42,19 @@ Note that a typical state file looks like this:
 ```
 
 ---
+## FrontApp Replication
+
+With each run of the integration, the following data set is extracted and replicated to the data warehouse:
+
+- **Team Table**: Daily or hourly aggregated team member statistics since the last_update (last completed run of the integration) through the most recent day or hour respectively. On the first run, ALL increments since the **Start Date** will be replicated.
+
+---
+
+## Troubleshooting / Other Important Info
+
+- **Team_table Data**: The first record is for the teammate = "ALL" and so is an aggregated record across all team members.  Also, the API supports pulling specific teams by using a slightly different endpoint, but we have set it up to pull members from all teams.
+
+- **Timestamps**: All timestamp columns and resume_date state parameter are Unix timestamps.
+
 
 Copyright &copy; 2018 Stitch
