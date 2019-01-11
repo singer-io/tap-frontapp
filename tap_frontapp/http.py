@@ -19,7 +19,6 @@ class Client(object):
 
     def __init__(self, config):
         self.token = 'Bearer ' + config.get('token')
-        self.metric = config.get('metric')
         self.session = requests.Session()
 
         self.calls_remaining = None

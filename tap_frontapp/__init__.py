@@ -11,7 +11,7 @@ from . import streams
 from .context import Context
 from . import schemas
 
-REQUIRED_CONFIG_KEYS = ["token", "metric"]
+REQUIRED_CONFIG_KEYS = ["token"]
 
 LOGGER = singer.get_logger()
 
