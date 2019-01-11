@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.3
+  * Remove `metric` config param [#1](https://github.com/singer-io/tap-frontapp/pull/1)
+
 ## 1.0.2
   * Fix an issue that causes `discovery` mode to fail
 
