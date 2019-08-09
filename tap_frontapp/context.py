@@ -34,6 +34,9 @@ class Context(object):
         for stream in catalog.streams:
             mdata = metadata.to_map(stream.metadata)
             root_metadata = mdata.get(())
+
+            self.selected_stream_ids.add(stream.tap_stream_id)
+
             if root_metadata and root_metadata.get('selected') is True:
                 self.selected_stream_ids.add(stream.tap_stream_id)
 
