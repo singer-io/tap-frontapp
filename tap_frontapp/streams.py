@@ -65,14 +65,23 @@ def select_fields(mdata, obj):
 @on_exception(constant, MetricsRateLimitException, max_tries=5, interval=60)
 @on_exception(expo, RateLimitException, max_tries=5)
 @sleep_and_retry
-@limits(calls=1, period=61) # 60 seconds needed to be padded by 1 second to work
-def get_metric(atx, metric, start_date, end_date):
-    LOGGER.info('Metrics query - metric: {} start_date: {} end_date: {} '.format(
-        metric,
-        start_date,
-        end_date))
-    return atx.client.get('/analytics', params={'start': start_date, \
-            'end': end_date, 'metrics[]':metric}, endpoint='analytics')
+@limits(calls=100, period=61) # 60 seconds needed to be padded by 1 second to work
+def get_metric(atx, metric, start_date, end_date, page_token = ''):
+    if metric == 'conversations':
+        LOGGER.info('Conversations query - metric: {} start_date: {} end_date: {} '.format(
+            metric,
+            start_date,
+            end_date))
+        return atx.client.get('/conversations', \
+                              params={'q[before]':end_date,'q[after]':start_date,'page_token':page_token,'limit':100}, \
+                              endpoint='conversations')
+    else:
+        LOGGER.info('Metrics query - metric: {} start_date: {} end_date: {} '.format(
+            metric,
+            start_date,
+            end_date))
+        return atx.client.get('/analytics', params={'start': start_date, \
+                'end': end_date, 'metrics[]':metric}, endpoint='analytics')
 
 def sync_metric(atx, metric, incremental_range, start_date, end_date):
     with singer.metrics.job_timer('daily_aggregated_metric'):
@@ -80,15 +89,34 @@ def sync_metric(atx, metric, incremental_range, start_date, end_date):
         start_date_formatted = datetime.datetime.utcfromtimestamp(start_date).strftime('%Y-%m-%d')
         # we've really moved this functionality to the request in the http script
         #so we don't expect that this will actually have to run mult times
-        while True:
-            if (time.monotonic() - start) >= MAX_METRIC_JOB_TIME:
-                raise Exception('Metric job timeout ({} secs)'.format(
-                    MAX_METRIC_JOB_TIME))
-            data = get_metric(atx, metric, start_date, end_date)
-            if data != '':
-                break
-            else:
-                time.sleep(METRIC_JOB_POLL_SLEEP)
+
+        if metric == 'team_table':
+            while True:
+                if (time.monotonic() - start) >= MAX_METRIC_JOB_TIME:
+                    raise Exception('Metric job timeout ({} secs)'.format(
+                        MAX_METRIC_JOB_TIME))
+                data = get_metric(atx, metric, start_date, end_date)
+                if data != '':
+                    break
+                else:
+                    time.sleep(METRIC_JOB_POLL_SLEEP)
+        if metric == 'conversations':
+            data = []
+            pagination_string = ''
+            while True:
+                if (time.monotonic() - start) >= MAX_METRIC_JOB_TIME:
+                    raise Exception('Metric job timeout ({} secs)'.format(
+                        MAX_METRIC_JOB_TIME))
+                response = get_metric(atx, metric, start_date, end_date, pagination_string)
+                if len(response['_results']) > 0:
+                    pagination_string = response['_pagination']['next'].split('page_token=')[1]
+                    for i,entry in enumerate(response['_results']):
+                        data.append(response['_results'][i])
+
+                    break
+
+                else:
+                    break
 
     data_rows = []
     # transform the team_table data
@@ -148,7 +176,25 @@ def sync_metric(atx, metric, incremental_range, start_date, end_date):
                     "num_composed_v": row[8]['v'],
                     "num_composed_p": row[8]['p']
                     })
-
+    elif metric == 'conversations':
+        for ind,row in enumerate(data):
+            LOGGER.info('Processing row {} of {}'.format(ind+1,len(data)))
+            contact_id = row['recipient']['_links']['related']['contact'].split('contacts/')[1]
+            path = '/'.join(['/contacts',contact_id])
+            contact = atx.client.get(path)
+            if contact['custom_fields']:
+                custom_field_name = atx.config['custom_field']
+                # print('CUSTOM FIELD FOUND:{}'.format(contact))
+            data_rows.append({
+                "created_at":datetime.datetime.utcfromtimestamp(row['created_at']).strftime('%Y-%m-%d %H:%M:%S'),
+                "is_private":row['is_private'],
+                "id":row['id'],
+                "subject":row['subject'],
+                "status":row['status'],
+                "assignee":row['assignee'],
+                "recipient":row['recipient'],
+                "custom_field":contact['custom_fields'][custom_field_name] if contact['custom_fields'] else None
+            })
     write_records(metric, data_rows)
 
 def write_metrics_state(atx, metric, date_to_resume):
@@ -220,7 +266,9 @@ def sync_selected_streams(atx):
 
     # last_synced_stream = atx.state.get('last_synced_stream')
 
-    if IDS.TEAM_TABLE in selected_streams:
-        sync_metrics(atx, 'team_table')
+    # if IDS.TEAM_TABLE in selected_streams:
+    #     sync_metrics(atx, 'team_table')
+    if IDS.CONVERSATIONS in selected_streams:
+        sync_metrics(atx, 'conversations')
 
     # add additional analytics here
