@@ -1,0 +1,7 @@
+{
+  "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzY29wZXMiOlsic2hhcmVkOioiXSwiaWF0IjoxNTU5MjMyMDM2LCJpc3MiOiJmcm9udCIsInN1YiI6IjY1YzU5YjI4MzcwN2M5MTBjNjBiIiwianRpIjoiZTQzNzkzMmE2ZTk2ZmI1NCJ9.qsfoP_KoBajgSYq4D1smsMZfxLiDYkAESKfZmfm3_IM",
+  "start_date": "2019-08-07T00:00:00Z",
+  "metric": "conversations",
+  "incremental_range": "daily",
+  "custom_field": "company_id"
+}
