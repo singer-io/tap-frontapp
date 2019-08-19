@@ -112,9 +112,6 @@ def sync_metric(atx, metric, incremental_range, start_date, end_date):
                     pagination_string = response['_pagination']['next'].split('page_token=')[1]
                     for i,entry in enumerate(response['_results']):
                         data.append(response['_results'][i])
-
-                    break
-
                 else:
                     break
 
@@ -179,12 +176,18 @@ def sync_metric(atx, metric, incremental_range, start_date, end_date):
     elif metric == 'conversations':
         for ind,row in enumerate(data):
             LOGGER.info('Processing row {} of {}'.format(ind+1,len(data)))
-            contact_id = row['recipient']['_links']['related']['contact'].split('contacts/')[1]
-            path = '/'.join(['/contacts',contact_id])
-            contact = atx.client.get(path)
+            try:
+                contact_id = row['recipient']['_links']['related']['contact'].split('contacts/')[1]
+                path = '/'.join(['/contacts',contact_id])
+                contact = atx.client.get(path)
+                contact_email = None
+                for handles_row in contact['handles']:
+                    if handles_row['source'] == 'email':
+                        contact_email = handles_row['handle']
+            except:
+                pass
             if contact['custom_fields']:
                 custom_field_name = atx.config['custom_field']
-                # print('CUSTOM FIELD FOUND:{}'.format(contact))
             data_rows.append({
                 "created_at":datetime.datetime.utcfromtimestamp(row['created_at']).strftime('%Y-%m-%d %H:%M:%S'),
                 "is_private":row['is_private'],
@@ -193,7 +196,7 @@ def sync_metric(atx, metric, incremental_range, start_date, end_date):
                 "status":row['status'],
                 "assignee":row['assignee'],
                 "recipient":row['recipient'],
-                "custom_field":contact['custom_fields'][custom_field_name] if contact['custom_fields'] else None
+                "contact_email": contact_email
             })
     write_records(metric, data_rows)
 

@@ -1,0 +1,54 @@
+{
+    "type": ["null", "object"],
+    "selected": true,
+    "additionalProperties": false,
+    "properties": {
+	"_links.self": {
+	    "type": ["null", "object"],
+	    "selected": true
+	},
+	"id": {
+	    "type": ["null", "string"],
+	    "selected": true
+	},
+  "subject": {
+      "type": ["null", "string"],
+  "selected": true
+	},
+  "status": {
+      "type": ["null", "string"],
+  "selected": true
+	},
+  "assignee": {
+      "type": ["null", "object"],
+  "selected": true
+	},
+	"last_message": {
+	    "type": ["null", "string"],
+	    "selected": true
+	},
+	"created_at": {
+	    "type": ["null", "string"],
+      "format": "date",
+	    "selected": true
+	},
+	"is_private": {
+	    "type": ["null", "boolean"],
+	    "selected": true
+  },
+  "recipient": {
+      "type": ["null", "object"],
+      "selected": true
+  },
+  "company_id": {
+      "type": ["null", "number"],
+      "selected": true
+  },
+  "contact_email": {
+    "type": ["null", "string"],
+    "selected": true
+  }
+},
+    "key_properties": ["id"],
+    "bookmark_properties": ["created_at"]
+}
