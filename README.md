@@ -17,6 +17,9 @@ This tap:
 >>>>>>> cleaned up http.py and added handling for when no data returned.
       - Hourly/Daily analytics of metrics
           - team_table
+  - [Conversations](https://dev.frontapp.com/#list-conversations)
+      - List of all conversations by day
+          - conversations (enriches the data with recipient contact email)
 - Outputs the schema for each resource
 
 ## Setup
@@ -40,13 +43,14 @@ Create the catalog:
 Then to run the extract:
 
 ```bash
-› tap-frontapp --config config.json --catalog catalog.json --state state.json 
+› tap-frontapp --config config.json --catalog catalog.json --state state.json
 ```
 
 Note that a typical state file looks like this:
 
 ```json
 {"bookmarks": {"team_table": {"date_to_resume": "2018-08-01 00:00:00"}}}
+{"bookmarks": {"conversations": {"date_to_resume": "2018-08-01 00:00:00"}}}
 ```
 
 ---

@@ -40,10 +40,6 @@
       "type": ["null", "object"],
       "selected": true
   },
-  "company_id": {
-      "type": ["null", "number"],
-      "selected": true
-  },
   "contact_email": {
     "type": ["null", "string"],
     "selected": true

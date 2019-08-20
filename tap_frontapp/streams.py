@@ -16,6 +16,7 @@ from .http import MetricsRateLimitException
 LOGGER = singer.get_logger()
 
 MAX_METRIC_JOB_TIME = 1800
+MAX_CONVERSATIONS_JOB_TIME = 7200
 METRIC_JOB_POLL_SLEEP = 1
 
 def count(tap_stream_id, records):
@@ -104,7 +105,7 @@ def sync_metric(atx, metric, incremental_range, start_date, end_date):
             data = []
             pagination_string = ''
             while True:
-                if (time.monotonic() - start) >= MAX_METRIC_JOB_TIME:
+                if (time.monotonic() - start) >= MAX_CONVERSATIONS_JOB_TIME:
                     raise Exception('Metric job timeout ({} secs)'.format(
                         MAX_METRIC_JOB_TIME))
                 response = get_metric(atx, metric, start_date, end_date, pagination_string)
@@ -175,7 +176,8 @@ def sync_metric(atx, metric, incremental_range, start_date, end_date):
                     })
     elif metric == 'conversations':
         for ind,row in enumerate(data):
-            LOGGER.info('Processing row {} of {}'.format(ind+1,len(data)))
+            if ind % 100 == 0:
+                LOGGER.info('Conversations progress: {} of {}'.format(ind,len(data)))
             try:
                 contact_id = row['recipient']['_links']['related']['contact'].split('contacts/')[1]
                 path = '/'.join(['/contacts',contact_id])
@@ -269,8 +271,8 @@ def sync_selected_streams(atx):
 
     # last_synced_stream = atx.state.get('last_synced_stream')
 
-    # if IDS.TEAM_TABLE in selected_streams:
-    #     sync_metrics(atx, 'team_table')
+    if IDS.TEAM_TABLE in selected_streams:
+        sync_metrics(atx, 'team_table')
     if IDS.CONVERSATIONS in selected_streams:
         sync_metrics(atx, 'conversations')
 

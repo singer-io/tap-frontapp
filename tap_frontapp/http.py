@@ -54,18 +54,20 @@ class Client(object):
                 #so here we just run the request again
                 time.sleep(2)
                 response = requests.request(method, self.url(path), **kwargs)
-
+        elif path == '/conversations' or '/contacts/' in path:
+            #conversations and contacts don't need to produce a report, sleep for shorter
+            response = requests.request(method, self.url(path), **kwargs)
+            time.sleep(.65)
         else:
             response = requests.request(method, self.url(path), **kwargs)
-            time.sleep(0.65)
-            # response = requests.request(method, self.url(path), **kwargs)
+            time.sleep(2)
+            response = requests.request(method, self.url(path), **kwargs)
 
         # print('final3 url=',response.url,flush=True)
         try:
             self.calls_remaining = int(response.headers['X-Ratelimit-Remaining'])
         except:
-            # print(response)
-            time.sleep(0.65)
+            time.sleep(2)
         self.limit_reset = int(float(response.headers['X-Ratelimit-Reset']))
 
         if response.status_code in [429, 503]:
