@@ -33,6 +33,7 @@ To set up FrontApp in Stitch, you need to get your JSON web token directly from 
 With each run of the integration, the following data set is extracted and replicated to the data warehouse:
 
 - **Team Table**: Daily or hourly aggregated team member statistics since the last_update (last completed run of the integration) through the most recent day or hour respectively. On the first run, ALL increments since the **Start Date** will be replicated.
+- **Conversations**: Conversation data enriched with recipient email handle from [Contacts API](https://dev.frontapp.com/#contacts) since the last_update (last completed run of the integration) through the most recent day or hour respectively. On the first run, ALL increments since the **Start Date** will be replicated.
 
 ---
 
@@ -40,7 +41,7 @@ With each run of the integration, the following data set is extracted and replic
 
 ### team_table
 
-- Table name: team_table 
+- Table name: team_table
 - Description: A list of team members and their event statistics during the course of the day/hour starting from the analytics_date.
 - Primary key: analytics_date, analytics_range, teammate_id
 - Replicated incrementally
@@ -54,4 +55,3 @@ With each run of the integration, the following data set is extracted and replic
 - **Team_table Data**: The first record is for the teammate = "ALL" and so is an aggregated record across all team members.  Also, the API supports pulling specific teams by using a slightly different endpoint, but we have set it up to pull members from all teams.
 
 - **Timestamps**: All timestamp columns and resume_date state parameter are Unix timestamps.
-
