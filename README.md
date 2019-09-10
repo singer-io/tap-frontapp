@@ -8,6 +8,7 @@ This tap:
 - Extracts the following resources from FrontApp
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   - [Analytics](https://dev.frontapp.com/#analytics)
 =======
   - [Analytics](https://dev.frontapp.com#analytics)
@@ -15,6 +16,9 @@ This tap:
 =======
   - [Analytics](https://dev.frontapp.com#analytics)
 >>>>>>> cleaned up http.py and added handling for when no data returned.
+=======
+  - [Analytics](https://dev.frontapp.com#analytics)
+>>>>>>> 1f95e607f623bdeea55b53cc16f1f3f007dda690
       - Hourly/Daily analytics of metrics
           - team_table
   - [Conversations](https://dev.frontapp.com/#list-conversations)
