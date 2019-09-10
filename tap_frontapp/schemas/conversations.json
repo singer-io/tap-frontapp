@@ -40,6 +40,10 @@
       "type": ["null", "object"],
       "selected": true
   },
+  "tags": {
+      "type": ["null", "string"],
+      "selected": true
+  },
   "contact_email": {
     "type": ["null", "string"],
     "selected": true
