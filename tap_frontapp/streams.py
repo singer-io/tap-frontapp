@@ -198,7 +198,8 @@ def sync_metric(atx, metric, incremental_range, start_date, end_date):
                 "status":row['status'],
                 "assignee":row['assignee'],
                 "recipient":row['recipient'],
-                "contact_email": contact_email
+                "contact_email": contact_email,
+                "tags": ','.join([tag['name'] for tag in row['tags']])
             })
     write_records(metric, data_rows)
 
