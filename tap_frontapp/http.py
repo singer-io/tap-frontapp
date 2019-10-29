@@ -20,7 +20,6 @@ class Client(object):
     def __init__(self, config):
         self.token = 'Bearer ' + config.get('token')
         self.session = requests.Session()
-
         self.calls_remaining = None
         self.limit_reset = None
 
@@ -44,7 +43,6 @@ class Client(object):
             kwargs['headers']['Authorization'] = self.token
 
         kwargs['headers']['Content-Type'] = 'application/json'
-
         if 'endpoint' in kwargs:
             endpoint = kwargs['endpoint']
             del kwargs['endpoint']
@@ -56,14 +54,20 @@ class Client(object):
                 #so here we just run the request again
                 time.sleep(2)
                 response = requests.request(method, self.url(path), **kwargs)
-
+        elif path == '/conversations' or '/contacts/' in path:
+            #conversations and contacts don't need to produce a report, sleep for shorter
+            response = requests.request(method, self.url(path), **kwargs)
+            time.sleep(.65)
         else:
             response = requests.request(method, self.url(path), **kwargs)
             time.sleep(2)
             response = requests.request(method, self.url(path), **kwargs)
 
-        #print('final3 url=',response.url)
-        self.calls_remaining = int(response.headers['X-Ratelimit-Remaining'])
+        # print('final3 url=',response.url,flush=True)
+        try:
+            self.calls_remaining = int(response.headers['X-Ratelimit-Remaining'])
+        except:
+            time.sleep(2)
         self.limit_reset = int(float(response.headers['X-Ratelimit-Reset']))
 
         if response.status_code in [429, 503]:
@@ -76,10 +80,13 @@ class Client(object):
             LOGGER.error('{} - {}'.format(response.status_code, response.text))
             raise
 
-        if len(response.json()['metrics']) > 0:
-            return response.json()['metrics'][0]['rows']
+        if path == '/conversations' or '/contacts/' in path:
+            return response.json()
         else:
-            return {}
+            if len(response.json()['metrics']) > 0:
+                return response.json()['metrics'][0]['rows']
+            else:
+                return {}
 
     def get(self, path, **kwargs):
         return self.request('get', path, **kwargs)

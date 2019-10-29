@@ -6,9 +6,24 @@ This tap:
 
 - Pulls raw data from FrontApp's [API](https://dev.frontapp.com/)
 - Extracts the following resources from FrontApp
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
   - [Analytics](https://dev.frontapp.com/#analytics)
+=======
+  - [Analytics](https://dev.frontapp.com#analytics)
+>>>>>>> cleaned up http.py and added handling for when no data returned.
+=======
+  - [Analytics](https://dev.frontapp.com#analytics)
+>>>>>>> cleaned up http.py and added handling for when no data returned.
+=======
+  - [Analytics](https://dev.frontapp.com#analytics)
+>>>>>>> 1f95e607f623bdeea55b53cc16f1f3f007dda690
       - Hourly/Daily analytics of metrics
           - team_table
+  - [Conversations](https://dev.frontapp.com/#list-conversations)
+      - List of all conversations by day
+          - conversations (enriches the data with recipient contact email)
 - Outputs the schema for each resource
 
 ## Setup
@@ -21,7 +36,7 @@ python3 ./setup.py install
 
 ## Configuration
 
-This tap requires a `config.json` which specifies details regarding [API authentication](https://dev.frontapp.com/#authentication), a cutoff date for syncing historical data, and a time period range [daily,hourly] to control what incremental extract date ranges are. See [config.sample.json](config.sample.json) for an example.
+This tap requires a `config.json` which specifies details regarding [API authentication](https://dev.frontapp.com/#authentication) by using a token, a cutoff date for syncing historical data (date format of YYYY-MM-DDTHH:MI:SSZ), and a time period range [daily,hourly] to control what incremental extract date ranges are. See [example.config.json](example.config.json) for an example.
 
 Create the catalog:
 
@@ -32,13 +47,14 @@ Create the catalog:
 Then to run the extract:
 
 ```bash
-› tap-frontapp --config config.json --catalog catalog.json --state state.json 
+› tap-frontapp --config config.json --catalog catalog.json --state state.json
 ```
 
 Note that a typical state file looks like this:
 
 ```json
 {"bookmarks": {"team_table": {"date_to_resume": "2018-08-01 00:00:00"}}}
+{"bookmarks": {"conversations": {"date_to_resume": "2018-08-01 00:00:00"}}}
 ```
 
 ---
