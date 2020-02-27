@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.0.4
+  * Increase polling interval due to issues with rate limiting [#4](https://github.com/singer-io/tap-frontapp/pull/4)
+
 ## 1.0.3
   * Remove `metric` config param [#1](https://github.com/singer-io/tap-frontapp/pull/1)
 
