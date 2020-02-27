@@ -16,7 +16,7 @@ from .http import MetricsRateLimitException
 LOGGER = singer.get_logger()
 
 MAX_METRIC_JOB_TIME = 1800
-METRIC_JOB_POLL_SLEEP = 1
+METRIC_JOB_POLL_SLEEP = 3
 
 def count(tap_stream_id, records):
     with singer.metrics.record_counter(tap_stream_id) as counter:
