@@ -65,7 +65,7 @@ def select_fields(mdata, obj):
 @on_exception(constant, MetricsRateLimitException, max_tries=5, interval=60)
 @on_exception(expo, RateLimitException, max_tries=5)
 @sleep_and_retry
-@limits(calls=1, period=61) # 60 seconds needed to be padded by 1 second to work
+@limits(calls=20, period=61) # 60 seconds needed to be padded by 1 second to work
 def get_metric(atx, metric, start_date, end_date):
     LOGGER.info('Metrics query - metric: {} start_date: {} end_date: {} '.format(
         metric,
