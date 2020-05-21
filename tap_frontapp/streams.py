@@ -149,6 +149,27 @@ def sync_metric(atx, metric, incremental_range, start_date, end_date):
                     "num_composed_p": row[8]['p']
                     })
 
+    # transform the team_table data
+    if metric == 'tags_table':
+        for row in data:
+            data_rows.append({
+                "analytics_date": start_date_formatted,
+                "analytics_range": incremental_range,
+                "tag_v": row[0]['v'],
+                "tag_url": row[0]['url'],
+                "tag_id": row[0]['id'],
+                "conversations_archived_v": row[1]['v'],
+                "conversations_archived_p": row[1]['p'],
+                "conversations_open_v": row[2]['v'],
+                "conversations_open_p": row[2]['p'],
+                "conversations_total_v": row[3]['v'],
+                "conversations_total_p": row[3]['p'],
+                "num_messages_v": row[4]['v'],
+                "num_messages_p": row[4]['p'],
+                "avg_message_conversations_v": row[5]['v'],
+                "avg_message_conversations_p": row[5]['p']
+                })
+
     write_records(metric, data_rows)
 
 def write_metrics_state(atx, metric, date_to_resume):
@@ -222,5 +243,8 @@ def sync_selected_streams(atx):
 
     if IDS.TEAM_TABLE in selected_streams:
         sync_metrics(atx, 'team_table')
+
+    if IDS.TAGS_TABLE in selected_streams:
+        sync_metrics(atx, 'tags_table')
 
     # add additional analytics here

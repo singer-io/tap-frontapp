@@ -6,13 +6,16 @@ from singer import utils
 
 class IDS(object): # pylint: disable=too-few-public-methods
     TEAM_TABLE = 'team_table'
+    TAGS_TABLE = 'tags_table'
 
 STATIC_SCHEMA_STREAM_IDS = [
-    IDS.TEAM_TABLE
+    IDS.TEAM_TABLE,
+    IDS.TAGS_TABLE
 ]
 
 PK_FIELDS = {
-    IDS.TEAM_TABLE: ['analytics_date', 'analytics_range', 'teammate_v']
+    IDS.TEAM_TABLE: ['analytics_date', 'analytics_range', 'teammate_v'],
+    IDS.TAGS_TABLE: ['analytics_date', 'analytics_range', 'tag_v']
 }
 
 def normalize_fieldname(fieldname):
