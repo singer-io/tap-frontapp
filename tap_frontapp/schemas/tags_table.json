@@ -51,49 +51,49 @@
 		"conversations_open_v": {
 			"type": [
 				"null",
-				"number"
+				"integer"
 			]
 		},
 		"conversations_open_p": {
 			"type": [
 				"null",
-				"number"
+				"integer"
 			]
 		},
 		"conversations_total_v": {
 			"type": [
 				"null",
-				"number"
+				"integer"
 			]
 		},
 		"conversations_total_p": {
 			"type": [
 				"null",
-				"number"
+				"integer"
 			]
 		},
 		"num_messages_v": {
 			"type": [
 				"null",
-				"number"
+				"integer"
 			]
 		},
 		"num_messages_p": {
 			"type": [
 				"null",
-				"number"
+				"integer"
 			]
 		},
 		"avg_message_conversations_v": {
 			"type": [
 				"null",
-				"integer"
+				"number"
 			]
 		},
 		"avg_message_conversations_p": {
 			"type": [
 				"null",
-				"integer"
+				"number"
 			]
 		}
 	}
