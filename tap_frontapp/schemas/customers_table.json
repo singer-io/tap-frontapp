@@ -39,7 +39,7 @@
         "resource_url": {
             "type": [
                 "null",
-                "integer"
+                "string"
             ]
         },
         "num_received_p": {
@@ -95,8 +95,8 @@
                 "null",
                 "number"
             ]
-    },
-    "avg_resolution_v": {
+        },
+        "avg_resolution_v": {
             "type": [
                 "null",
                 "number"
