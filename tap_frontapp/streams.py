@@ -333,8 +333,6 @@ def sync_metrics(atx, metric):
         write_metrics_state(atx, metric, next_date)
         current_date = next_date
 
-    reset_stream(atx.state, metric)
-
 def sync_selected_streams(atx):
     selected_streams = atx.selected_stream_ids
 
