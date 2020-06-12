@@ -71,8 +71,16 @@ def get_metric(atx, metric, start_date, end_date):
         metric,
         start_date,
         end_date))
+
+    # Time graph response format isn't using the same
+    # json key for the data to sync
+    if metric.endswith('_graph'):
+        metricRowsKey = "vals";
+    else:
+        metricRowsKey = "rows";
+
     return atx.client.get('/analytics', params={'start': start_date, \
-            'end': end_date, 'metrics[]':metric}, endpoint='analytics')
+            'end': end_date, 'metrics[]':metric}, endpoint='analytics', metricRowsKey=metricRowsKey)
 
 def sync_metric(atx, metric, incremental_range, start_date, end_date):
     with singer.metrics.job_timer('daily_aggregated_metric'):
@@ -130,6 +138,18 @@ def sync_metric(atx, metric, incremental_range, start_date, end_date):
                 "num_composed_v": row[8]['v'],
                 "num_composed_p": row[8]['p']
                 })
+
+    # transform the team_table data
+    if metric.endswith('_graph'):
+        for val in data:
+            data_rows.append({
+                "analytics_date": start_date_formatted,
+                "analytics_range": incremental_range,
+                "start": val['start'],
+                "end": val['end'],
+                "label": val['label'],
+                "v": val['v'],
+                "p": val['p']
 
     # transform the team_table data
     if metric == 'tags_table':
@@ -346,5 +366,26 @@ def sync_selected_streams(atx):
 
     if IDS.TOP_REPLIES_TABLE in selected_streams:
         sync_metrics(atx, 'top_replies_table')
+
+    if IDS.CUSTOMERS_HELPED_GRAPH in selected_streams:
+        sync_metrics(atx, 'customers_helped_graph')
+
+    if IDS.FIRST_RESPONSE_GRAPH in selected_streams:
+        sync_metrics(atx, 'first_response_graph')
+
+    if IDS.MESSAGES_RECEIVED_GRAPH in selected_streams:
+        sync_metrics(atx, 'messages_received_graph')
+
+    if IDS.NEW_CONVERSATIONS_GRAPH in selected_streams:
+        sync_metrics(atx, 'new_conversations_graph')
+
+    if IDS.REPLIES_SENT_GRAPH in selected_streams:
+        sync_metrics(atx, 'replies_sent_graph')
+
+    if IDS.RESOLUTION_GRAPH in selected_streams:
+        sync_metrics(atx, 'resolution_graph')
+
+    if IDS.RESPONSE_GRAPH in selected_streams:
+        sync_metrics(atx, 'response_graph')
 
     # add additional analytics here

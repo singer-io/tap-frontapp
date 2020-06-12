@@ -13,7 +13,13 @@ class IDS(object): # pylint: disable=too-few-public-methods
     RESPONSE_HISTO = 'response_histo'
     TOP_CONVERSATION_TABLE = 'top_conversations_table'
     TOP_REACTION_TIME_TABLE = 'top_reaction_time_table'
-    TOP_REPLIES_TABLE = 'top_replies_table'
+    TOP_REPLIES_TABLE = 'top_replies_table'    CUSTOMERS_HELPED_GRAPH = 'customers_helped_graph'
+    FIRST_RESPONSE_GRAPH = 'first_response_graph'
+    MESSAGES_RECEIVED_GRAPH = 'messages_received_graph'
+    NEW_CONVERSATIONS_GRAPH = 'new_conversations_graph'
+    REPLIES_SENT_GRAPH = 'replies_sent_graph'
+    RESOLUTION_GRAPH = 'resolution_graph'
+    RESPONSE_GRAPH = 'response_graph'
 
 STATIC_SCHEMA_STREAM_IDS = [
     IDS.TEAM_TABLE,
@@ -24,11 +30,25 @@ STATIC_SCHEMA_STREAM_IDS = [
     IDS.RESPONSE_HISTO,
     IDS.TOP_CONVERSATION_TABLE,
     IDS.TOP_REACTION_TIME_TABLE,
-    IDS.TOP_REPLIES_TABLE
+    IDS.TOP_REPLIES_TABLE,
+    IDS.CUSTOMERS_HELPED_GRAPH,
+    IDS.FIRST_RESPONSE_GRAPH,
+    IDS.MESSAGES_RECEIVED_GRAPH,
+    IDS.NEW_CONVERSATIONS_GRAPH,
+    IDS.REPLIES_SENT_GRAPH,
+    IDS.RESOLUTION_GRAPH,
+    IDS.RESPONSE_GRAPH
 ]
 
 PK_FIELDS = {
     IDS.TEAM_TABLE: ['analytics_date', 'analytics_range', 'teammate_v'],
+    IDS.CUSTOMERS_HELPED_GRAPH: ['analytics_date', 'analytics_range', 'start', 'end'],
+    IDS.FIRST_RESPONSE_GRAPH: ['analytics_date', 'analytics_range', 'start', 'end'],
+    IDS.MESSAGES_RECEIVED_GRAPH: ['analytics_date', 'analytics_range', 'start', 'end'],
+    IDS.NEW_CONVERSATIONS_GRAPH: ['analytics_date', 'analytics_range', 'start', 'end'],
+    IDS.REPLIES_SENT_GRAPH: ['analytics_date', 'analytics_range', 'start', 'end'],
+    IDS.RESOLUTION_GRAPH: ['analytics_date', 'analytics_range', 'start', 'end'],
+    IDS.RESPONSE_GRAPH: ['analytics_date', 'analytics_range', 'start', 'end']
     IDS.TAGS_TABLE: ['analytics_date', 'analytics_range', 'tag_v'],
     IDS.CUSTOMERS_TABLE: ['analytics_date', 'analytics_range', 'resource_t', 'resource_v'],
     IDS.FIRST_RESPONSE_HISTO: ['analytics_date', 'analytics_range', 'time_v'],

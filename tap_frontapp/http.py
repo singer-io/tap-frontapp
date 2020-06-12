@@ -38,6 +38,10 @@ class Client(object):
             if 0 < wait <= 300:
                 time.sleep(wait)
 
+        if 'metricRowsKey' in kwargs:
+            metricRowsKey = kwargs['metricRowsKey']
+            del kwargs['metricRowsKey']
+
         if 'headers' not in kwargs:
             kwargs['headers'] = {}
         if self.token:
@@ -77,7 +81,7 @@ class Client(object):
             raise
 
         if len(response.json()['metrics']) > 0:
-            return response.json()['metrics'][0]['rows']
+            return response.json()['metrics'][0][metricRowsKey]
         else:
             return {}
 
