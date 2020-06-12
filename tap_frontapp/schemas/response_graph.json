@@ -1,0 +1,52 @@
+{
+    "type": [
+        "null",
+        "object"
+    ],
+    "additionalProperties": false,
+    "properties": {
+        "analytics_date": {
+            "type": [
+                "null",
+                "string"
+            ],
+            "format": "date"
+        },
+        "analytics_range": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "start": {
+            "type": [
+                "null",
+                "integer"
+            ]
+        },
+        "end": {
+            "type": [
+                "null",
+                "integer"
+            ]
+        },
+        "label": {
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        "p": {
+            "type": [
+                "null",
+                "integer"
+            ]
+        },
+        "v": {
+            "type": [
+                "null",
+                "integer"
+            ]
+        }
+    }
+}
