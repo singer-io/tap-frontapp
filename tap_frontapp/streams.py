@@ -150,6 +150,7 @@ def sync_metric(atx, metric, incremental_range, start_date, end_date):
                 "label": val['label'],
                 "v": val['v'],
                 "p": val['p']
+                })
 
     # transform the team_table data
     if metric == 'tags_table':
