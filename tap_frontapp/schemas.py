@@ -6,7 +6,14 @@ from singer import utils
 
 class IDS(object): # pylint: disable=too-few-public-methods
     TEAM_TABLE = 'team_table'
-    CUSTOMERS_HELPED_GRAPH = 'customers_helped_graph'
+    TAGS_TABLE = 'tags_table'
+    CUSTOMERS_TABLE = 'customers_table'
+    FIRST_RESPONSE_HISTO = 'first_response_histo'
+    RESOLUTION_HISTO = 'resolution_histo'
+    RESPONSE_HISTO = 'response_histo'
+    TOP_CONVERSATION_TABLE = 'top_conversations_table'
+    TOP_REACTION_TIME_TABLE = 'top_reaction_time_table'
+    TOP_REPLIES_TABLE = 'top_replies_table'    CUSTOMERS_HELPED_GRAPH = 'customers_helped_graph'
     FIRST_RESPONSE_GRAPH = 'first_response_graph'
     MESSAGES_RECEIVED_GRAPH = 'messages_received_graph'
     NEW_CONVERSATIONS_GRAPH = 'new_conversations_graph'
@@ -16,6 +23,14 @@ class IDS(object): # pylint: disable=too-few-public-methods
 
 STATIC_SCHEMA_STREAM_IDS = [
     IDS.TEAM_TABLE,
+    IDS.TAGS_TABLE,
+    IDS.CUSTOMERS_TABLE,
+    IDS.FIRST_RESPONSE_HISTO,
+    IDS.RESOLUTION_HISTO,
+    IDS.RESPONSE_HISTO,
+    IDS.TOP_CONVERSATION_TABLE,
+    IDS.TOP_REACTION_TIME_TABLE,
+    IDS.TOP_REPLIES_TABLE,
     IDS.CUSTOMERS_HELPED_GRAPH,
     IDS.FIRST_RESPONSE_GRAPH,
     IDS.MESSAGES_RECEIVED_GRAPH,
@@ -34,6 +49,14 @@ PK_FIELDS = {
     IDS.REPLIES_SENT_GRAPH: ['analytics_date', 'analytics_range', 'start', 'end'],
     IDS.RESOLUTION_GRAPH: ['analytics_date', 'analytics_range', 'start', 'end'],
     IDS.RESPONSE_GRAPH: ['analytics_date', 'analytics_range', 'start', 'end']
+    IDS.TAGS_TABLE: ['analytics_date', 'analytics_range', 'tag_v'],
+    IDS.CUSTOMERS_TABLE: ['analytics_date', 'analytics_range', 'resource_t', 'resource_v'],
+    IDS.FIRST_RESPONSE_HISTO: ['analytics_date', 'analytics_range', 'time_v'],
+    IDS.RESOLUTION_HISTO: ['analytics_date', 'analytics_range', 'time_v'],
+    IDS.RESPONSE_HISTO: ['analytics_date', 'analytics_range', 'time_v'],
+    IDS.TOP_CONVERSATION_TABLE: ['analytics_date', 'analytics_range', 'teammate_v'],
+    IDS.TOP_REACTION_TIME_TABLE: ['analytics_date', 'analytics_range', 'teammate_v'],
+    IDS.TOP_REPLIES_TABLE: ['analytics_date', 'analytics_range', 'teammate_v']
 }
 
 def normalize_fieldname(fieldname):
