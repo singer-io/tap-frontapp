@@ -39,13 +39,13 @@
         "p": {
             "type": [
                 "null",
-                "integer"
+                "number"
             ]
         },
         "v": {
             "type": [
                 "null",
-                "integer"
+                "number"
             ]
         }
     }
