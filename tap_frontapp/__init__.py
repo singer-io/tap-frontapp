@@ -73,6 +73,7 @@ def sync(atx):
 
 @utils.handle_top_exception(LOGGER)
 def main():
+    print('This is version X')
     args = utils.parse_args(REQUIRED_CONFIG_KEYS)
     atx = Context(args.config, args.state)
     if args.discover:
