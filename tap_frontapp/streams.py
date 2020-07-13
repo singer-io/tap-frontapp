@@ -93,61 +93,43 @@ def sync_metric(atx, metric, incremental_range, start_date, end_date):
     data_rows = []
     # transform the team_table data
     if metric == 'team_table':
-        rnum = 0
         for row in data:
-            rnum += 1
-            # the first row returned from frontapp is an aggregate row
+
+            # One of the row returned from frontapp is an aggregate row
             # and has a slightly different form
-            if rnum == 1:
-                data_rows.append({
-                    "analytics_date": start_date_formatted,
-                    "analytics_range": incremental_range,
-                    "teammate_v": row[0]['v'],
-                    "teammate_url": "",
-                    "teammate_id": 0,
-                    "teammate_p": row[0]['p'],
-                    "num_conversations_v": row[1]['v'],
-                    "num_conversations_p": row[1]['p'],
-                    "avg_message_conversations_v": row[2]['v'],
-                    "avg_message_conversations_p": row[2]['p'],
-                    "avg_reaction_time_v": row[3]['v'],
-                    "avg_reaction_time_p": row[3]['p'],
-                    "avg_first_reaction_time_v": row[4]['v'],
-                    "avg_first_reaction_time_p": row[4]['p'],
-                    "num_messages_v": row[5]['v'],
-                    "num_messages_p": row[5]['p'],
-                    "num_sent_v": row[6]['v'],
-                    "num_sent_p": row[6]['p'],
-                    "num_replied_v": row[7]['v'],
-                    "num_replied_p": row[7]['p'],
-                    "num_composed_v": row[8]['v'],
-                    "num_composed_p": row[8]['p']
-                    })
-            else:
-                data_rows.append({
-                    "analytics_date": start_date_formatted,
-                    "analytics_range": incremental_range,
-                    "teammate_v": row[0]['v'],
-                    "teammate_url": row[0]['url'],
-                    "teammate_id": row[0]['id'],
-                    "teammate_p": row[0]['v'],
-                    "num_conversations_v": row[1]['v'],
-                    "num_conversations_p": row[1]['p'],
-                    "avg_message_conversations_v": row[2]['v'],
-                    "avg_message_conversations_p": row[2]['p'],
-                    "avg_reaction_time_v": row[3]['v'],
-                    "avg_reaction_time_p": row[3]['p'],
-                    "avg_first_reaction_time_v": row[4]['v'],
-                    "avg_first_reaction_time_p": row[4]['p'],
-                    "num_messages_v": row[5]['v'],
-                    "num_messages_p": row[5]['p'],
-                    "num_sent_v": row[6]['v'],
-                    "num_sent_p": row[6]['p'],
-                    "num_replied_v": row[7]['v'],
-                    "num_replied_p": row[7]['p'],
-                    "num_composed_v": row[8]['v'],
-                    "num_composed_p": row[8]['p']
-                    })
+            if not 'url' in row[0]:
+                row[0]['url'] = ""
+
+            if not 'id' in row[0]:
+                row[0]['id'] = 0
+
+            if not 'p' in row[0]:
+                row[0]['p'] = row[0]['v']
+
+            data_rows.append({
+                "analytics_date": start_date_formatted,
+                "analytics_range": incremental_range,
+                "teammate_v": row[0]['v'],
+                "teammate_url": row[0]['url'],
+                "teammate_id": row[0]['id'],
+                "teammate_p": row[0]['p'],
+                "num_conversations_v": row[1]['v'],
+                "num_conversations_p": row[1]['p'],
+                "avg_message_conversations_v": row[2]['v'],
+                "avg_message_conversations_p": row[2]['p'],
+                "avg_reaction_time_v": row[3]['v'],
+                "avg_reaction_time_p": row[3]['p'],
+                "avg_first_reaction_time_v": row[4]['v'],
+                "avg_first_reaction_time_p": row[4]['p'],
+                "num_messages_v": row[5]['v'],
+                "num_messages_p": row[5]['p'],
+                "num_sent_v": row[6]['v'],
+                "num_sent_p": row[6]['p'],
+                "num_replied_v": row[7]['v'],
+                "num_replied_p": row[7]['p'],
+                "num_composed_v": row[8]['v'],
+                "num_composed_p": row[8]['p']
+                })
 
     write_records(metric, data_rows)
 
