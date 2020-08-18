@@ -29,10 +29,21 @@ Create the catalog:
 › tap-frontapp --config config.json --discover > catalog.json
 ```
 
+In `catalog.json`, add this entry in the `streams[].metadata` array of the streams you want to extract:
+
+```json
+{
+  "metadata": {
+      "selected": true
+    },
+  "breadcrumb": []
+}
+```
+
 Then to run the extract:
 
 ```bash
-› tap-frontapp --config config.json --catalog catalog.json --state state.json 
+› tap-frontapp --config config.json --properties catalog.json --state state.json 
 ```
 
 Note that a typical state file looks like this:
