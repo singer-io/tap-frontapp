@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.1.0
+  * Add several new analytics tables [#12](https://github.com/singer-io/tap-frontapp/pull/12)
+
 ## 1.0.4
   * Increase polling interval due to issues with rate limiting [#4](https://github.com/singer-io/tap-frontapp/pull/4)
 
