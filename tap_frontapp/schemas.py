@@ -4,40 +4,34 @@ import re
 import singer
 from singer import utils
 
-class IDS(object): # pylint: disable=too-few-public-methods
-    TEAM_TABLE = 'team_table'
+
+class IDS(object):  # pylint: disable=too-few-public-methods
+    ACCOUNTS_TABLE = 'accounts_table'
+    CHANNELS_TABLE = 'channels_table'
+    INBOXES_TABLE = 'inboxes_table'
     TAGS_TABLE = 'tags_table'
-    CUSTOMERS_TABLE = 'customers_table'
-    FIRST_RESPONSE_HISTO = 'first_response_histo'
-    RESOLUTION_HISTO = 'resolution_histo'
-    RESPONSE_HISTO = 'response_histo'
-    TOP_CONVERSATION_TABLE = 'top_conversations_table'
-    TOP_REACTION_TIME_TABLE = 'top_reaction_time_table'
-    TOP_REPLIES_TABLE = 'top_replies_table'
+    TEAMMATES_TABLE = 'teammates_table'
+    TEAMS_TABLE = 'teams_table'
+
 
 STATIC_SCHEMA_STREAM_IDS = [
-    IDS.TEAM_TABLE,
+    IDS.ACCOUNTS_TABLE,
+    IDS.CHANNELS_TABLE,
+    IDS.INBOXES_TABLE,
     IDS.TAGS_TABLE,
-    IDS.CUSTOMERS_TABLE,
-    IDS.FIRST_RESPONSE_HISTO,
-    IDS.RESOLUTION_HISTO,
-    IDS.RESPONSE_HISTO,
-    IDS.TOP_CONVERSATION_TABLE,
-    IDS.TOP_REACTION_TIME_TABLE,
-    IDS.TOP_REPLIES_TABLE
+    IDS.TEAMMATES_TABLE,
+    IDS.TEAMS_TABLE,
 ]
 
 PK_FIELDS = {
-    IDS.TEAM_TABLE: ['analytics_date', 'analytics_range', 'teammate_v'],
-    IDS.TAGS_TABLE: ['analytics_date', 'analytics_range', 'tag_v'],
-    IDS.CUSTOMERS_TABLE: ['analytics_date', 'analytics_range', 'resource_t', 'resource_v'],
-    IDS.FIRST_RESPONSE_HISTO: ['analytics_date', 'analytics_range', 'time_v'],
-    IDS.RESOLUTION_HISTO: ['analytics_date', 'analytics_range', 'time_v'],
-    IDS.RESPONSE_HISTO: ['analytics_date', 'analytics_range', 'time_v'],
-    IDS.TOP_CONVERSATION_TABLE: ['analytics_date', 'analytics_range', 'teammate_v'],
-    IDS.TOP_REACTION_TIME_TABLE: ['analytics_date', 'analytics_range', 'teammate_v'],
-    IDS.TOP_REPLIES_TABLE: ['analytics_date', 'analytics_range', 'teammate_v']
+    IDS.ACCOUNTS_TABLE: ['analytics_date', 'analytics_range', 'report_id', 'metric_id'],
+    IDS.CHANNELS_TABLE: ['analytics_date', 'analytics_range', 'report_id', 'metric_id'],
+    IDS.INBOXES_TABLE: ['analytics_date', 'analytics_range', 'report_id', 'metric_id'],
+    IDS.TAGS_TABLE: ['analytics_date', 'analytics_range', 'report_id', 'metric_id'],
+    IDS.TEAMMATES_TABLE: ['analytics_date', 'analytics_range', 'report_id', 'metric_id'],
+    IDS.TEAMS_TABLE: ['analytics_date', 'analytics_range', 'report_id', 'metric_id'],
 }
+
 
 def normalize_fieldname(fieldname):
     fieldname = fieldname.lower()
@@ -55,10 +49,12 @@ def normalize_fieldname(fieldname):
 def get_abs_path(path):
     return os.path.join(os.path.dirname(os.path.realpath(__file__)), path)
 
+
 def load_schema(tap_stream_id):
     path = 'schemas/{}.json'.format(tap_stream_id)
-    #print("schema path=",path)
+    # print("schema path=",path)
     return utils.load_json(get_abs_path(path))
+
 
 def load_and_write_schema(tap_stream_id):
     schema = load_schema(tap_stream_id)

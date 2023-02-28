@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.0.0
+  * Implementing new Frontapp [Analytics API](https://dev.frontapp.com/changelog/core-api-analytics-and-exports-updates)
+
 ## 1.1.0
   * Add several new analytics tables [#12](https://github.com/singer-io/tap-frontapp/pull/12)
 

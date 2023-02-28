@@ -6,9 +6,14 @@ This tap:
 
 - Pulls raw data from FrontApp's [API](https://dev.frontapp.com/)
 - Extracts the following resources from FrontApp
-  - [Analytics](https://dev.frontapp.com/#analytics)
-      - Hourly/Daily analytics of metrics
-          - team_table
+  - [Analytics](https://dev.frontapp.com/reference/analytics)
+      - Daily analytics of metrics
+          - Accounts
+          - Channels
+          - Inboxes
+          - Tags
+          - Teammates
+          - Teams
 - Outputs the schema for each resource
 
 ## Setup
@@ -21,7 +26,7 @@ python3 ./setup.py install
 
 ## Configuration
 
-This tap requires a `config.json` which specifies details regarding [API authentication](https://dev.frontapp.com/#authentication), a cutoff date for syncing historical data, and a time period range [daily,hourly] to control what incremental extract date ranges are. See [config.sample.json](config.sample.json) for an example.
+This tap requires a `config.json` which specifies details regarding [API authentication](https://dev.frontapp.com/#authentication) and a cutoff date for syncing historical data. See [example.config.json](example.config.json) for an example.
 
 Create the catalog:
 
@@ -57,13 +62,16 @@ Note that a typical state file looks like this:
 
 With each run of the integration, the following data set is extracted and replicated to the data warehouse:
 
-- **Team Table**: Daily or hourly aggregated team member statistics since the last_update (last completed run of the integration) through the most recent day or hour respectively. On the first run, ALL increments since the **Start Date** will be replicated.
+- **Accounts Table**: Daily aggregated Accounts statistics since the last_update (last completed run of the integration) through the most recent day respectively.
+- **Channels Table**: Daily aggregated Channels since the last_update (last completed run of the integration) through the most recent day respectively.
+- **Inboxes Table**: Daily aggregated Inboxes statistics since the last_update (last completed run of the integration) through the most recent day respectively.
+- **Tags Table**: Daily aggregated Tags statistics since the last_update (last completed run of the integration) through the most recent day respectively.
+- **Teammates Table**: Daily aggregated Teammates statistics since the last_update (last completed run of the integration) through the most recent day respectively.
+- **Team Table**: Daily aggregated Team statistics since the last_update (last completed run of the integration) through the most recent day respectively.
 
 ---
 
 ## Troubleshooting / Other Important Info
-
-- **Team_table Data**: The first record is for the teammate = "ALL" and so is an aggregated record across all team members.  Also, the API supports pulling specific teams by using a slightly different endpoint, but we have set it up to pull members from all teams.
 
 - **Timestamps**: All timestamp columns and resume_date state parameter are Unix timestamps.
 
