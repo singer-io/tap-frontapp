@@ -1,0 +1,27 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: 218546966473.dkr.ecr.us-east-1.amazonaws.com/circle-ci:tap-tester-v4
+    steps:
+      - checkout
+      - run:
+          name: 'Setup virtual env'
+          command: |
+            python3 -mvenv /usr/local/share/virtualenvs/tap-frontapp
+            source /usr/local/share/virtualenvs/tap-frontapp/bin/activate
+            pip install -U 'pip==22.2.2' 'setuptools==65.3.0'
+            pip install .[dev]
+      - run:
+          name: 'pylint'
+          command: |
+            source /usr/local/share/virtualenvs/tap-frontapp/bin/activate
+            pip install pylint
+            pylint tap_frontapp -d C,R,W
+
+workflows:
+  version: 2
+  commit:
+    jobs:
+      - build:
+          context: circleci-user
