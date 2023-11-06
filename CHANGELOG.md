@@ -2,6 +2,7 @@
 
 ## 1.1.1
   * Dependabot update [#18](https://github.com/singer-io/tap-frontapp/pull/18)
+  * Setup circleci project [#21](https://github.com/singer-io/tap-frontapp/pull/21)
 
 ## 1.1.0
   * Add several new analytics tables [#12](https://github.com/singer-io/tap-frontapp/pull/12)

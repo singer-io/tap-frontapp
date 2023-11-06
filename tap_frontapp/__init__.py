@@ -51,6 +51,11 @@ def discover():
     return catalog
 
 
+def get_abs_path(path: str):
+    """Returns absolute path for URL."""
+    return os.path.join(os.path.dirname(os.path.realpath(__file__)), path)
+
+
 # this is already defined in schemas.py though w/o dependencies.  do we keep this for the sync?
 def load_schema(tap_stream_id):
     path = "schemas/{}.json".format(tap_stream_id)
