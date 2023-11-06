@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# pylint: disable=E0602
+
 import os
 import sys
 import json
@@ -49,6 +49,11 @@ def discover():
             metadata=metadata
         ))
     return catalog
+
+
+def get_abs_path(path: str):
+    """Returns absolute path for URL."""
+    return os.path.join(os.path.dirname(os.path.realpath(__file__)), path)
 
 
 # this is already defined in schemas.py though w/o dependencies.  do we keep this for the sync?
