@@ -16,6 +16,11 @@ setup(
         "backoff==1.3.2",
         "requests==2.20.0",
     ],
+    extras_require={
+        'dev': [
+            'pylint'
+        ]
+    },
     entry_points="""
     [console_scripts]
     tap-frontapp=tap_frontapp:main
