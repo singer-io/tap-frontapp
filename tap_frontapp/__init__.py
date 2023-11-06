@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+# pylint: disable=E0602
 import os
 import sys
 import json
