@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.0.0
+  * Implementing new Frontapp [Analytics API](https://dev.frontapp.com/changelog/core-api-analytics-and-exports-updates)
+
 ## 1.1.1
   * Dependabot update [#18](https://github.com/singer-io/tap-frontapp/pull/18)
   * Setup circleci project [#21](https://github.com/singer-io/tap-frontapp/pull/21)

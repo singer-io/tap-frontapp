@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="tap-frontapp",
-    version="1.1.1",
+    version="2.0.0",
     description="Singer.io tap for extracting data from the FrontApp API",
     author="bytcode.io",
     url="http://singer.io",
