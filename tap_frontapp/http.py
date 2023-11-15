@@ -54,21 +54,15 @@ class Client(object):
                 response = requests.request(method, url, **kwargs)
                 timer.tags[metrics.Tag.http_status_code] = response.status_code
 
-                # frontapp's API takes an initial request then needs 1 sec to produce the report
-                # so here we just run the request again
-                time.sleep(2)
-                response = requests.request(method, url, **kwargs)
 
         else:
-            response = requests.request(method, url, **kwargs)
-            time.sleep(2)
             response = requests.request(method, url, **kwargs)
 
         self.calls_remaining = int(response.headers['X-Ratelimit-Remaining'])
         self.limit_reset = int(float(response.headers['X-Ratelimit-Reset']))
 
         if response.status_code in [429, 503]:
-            raise RateLimitException()
+            raise RateLimitException(response.text)
         if response.status_code == 423:
             raise MetricsRateLimitException()
         try:
