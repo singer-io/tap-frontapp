@@ -8,11 +8,14 @@ from singer import metrics
 
 LOGGER = singer.get_logger()
 
+
 class RateLimitException(Exception):
     pass
 
+
 class MetricsRateLimitException(Exception):
     pass
+
 
 class Client(object):
     BASE_URL = 'https://api2.frontapp.com'
@@ -24,7 +27,6 @@ class Client(object):
         self.calls_remaining = None
         self.limit_reset = None
 
-
     def url(self, path):
         return self.BASE_URL + path
 
@@ -32,7 +34,7 @@ class Client(object):
                           RateLimitException,
                           max_tries=10,
                           factor=2)
-    def request(self, method, path, **kwargs):
+    def request(self, method, url, **kwargs):
         if self.calls_remaining is not None and self.calls_remaining == 0:
             wait = self.limit_reset - int(time.monotonic())
             if 0 < wait <= 300:
@@ -49,25 +51,18 @@ class Client(object):
             endpoint = kwargs['endpoint']
             del kwargs['endpoint']
             with metrics.http_request_timer(endpoint) as timer:
-                response = requests.request(method, self.url(path), **kwargs)
+                response = requests.request(method, url, **kwargs)
                 timer.tags[metrics.Tag.http_status_code] = response.status_code
 
-                # frontapp's API takes an initial request then needs 1 sec to produce the report
-                #so here we just run the request again
-                time.sleep(2)
-                response = requests.request(method, self.url(path), **kwargs)
 
         else:
-            response = requests.request(method, self.url(path), **kwargs)
-            time.sleep(2)
-            response = requests.request(method, self.url(path), **kwargs)
+            response = requests.request(method, url, **kwargs)
 
-        #print('final3 url=',response.url)
         self.calls_remaining = int(response.headers['X-Ratelimit-Remaining'])
         self.limit_reset = int(float(response.headers['X-Ratelimit-Reset']))
 
         if response.status_code in [429, 503]:
-            raise RateLimitException()
+            raise RateLimitException(response.text)
         if response.status_code == 423:
             raise MetricsRateLimitException()
         try:
@@ -76,14 +71,22 @@ class Client(object):
             LOGGER.error('{} - {}'.format(response.status_code, response.text))
             raise
 
-        if len(response.json()['metrics']) > 0:
-            return response.json()['metrics'][0]['rows']
-        else:
-            return {}
+        return response
 
-    def get(self, path, **kwargs):
-        return self.request('get', path, **kwargs)
+    def get_report_metrics(self, url, **kwargs):
+        response = self.request('get', url, **kwargs)
+        return response.json().get('metrics', [])
 
-    def post(self, path, data, **kwargs):
+    def create_report(self, path, data, **kwargs):
+        url = self.url(path)
         kwargs['data'] = json.dumps(data)
-        return self.request('post', path, **kwargs)
+        response = self.request('post', url, **kwargs)
+        if response.json().get('_links', {}).get('self'):
+            return response.json()['_links']['self']
+
+        return {}
+
+    def list_metrics(self, path, **kwargs):
+        url = self.url(path)
+        response = self.request('get', url, **kwargs)
+        return response.json().get('_results', [])
