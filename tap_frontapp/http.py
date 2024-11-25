@@ -46,6 +46,7 @@ class Client(object):
             kwargs['headers']['Authorization'] = self.token
 
         kwargs['headers']['Content-Type'] = 'application/json'
+        kwargs['headers']['User-Agent'] = 'singer-io/tap-frontapp'
 
         if 'endpoint' in kwargs:
             endpoint = kwargs['endpoint']
