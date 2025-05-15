@@ -30,29 +30,29 @@ def discover():
     
     # Build initial catalog from schema files
     for tap_stream_id in schemas.STATIC_SCHEMA_STREAM_IDS:
-        # LOGGER.info("tap stream id=%s", tap_stream_id)
+        LOGGER.info("tap stream id=%s", tap_stream_id)
         schema = Schema.from_dict(schemas.load_schema(tap_stream_id))
         metadata = []
         
-        # Selecting stream level metadata first
+        # Stream-level metadata select the stream
         metadata.append({
-            'metadata': {
-                'selected': True  # Make sure to select every stream
+            "metadata": {
+                "selected": True  # Make sure to select every stream
             },
-            'breadcrumb': []
+            "breadcrumb": []
         })
         
-        # Now adding field-level metadata
+        # Field level metadata with inclusion type
         for field_name in schema.properties.keys():
             if field_name in schemas.PK_FIELDS[tap_stream_id]:
-                inclusion = 'automatic'
+                inclusion = "automatic"
             else:
-                inclusion = 'available'
+                inclusion = "available"
             metadata.append({
-                'metadata': {
-                    'inclusion': inclusion
+                "metadata": {
+                    "inclusion": inclusion
                 },
-                'breadcrumb': ['properties', field_name]
+                "breadcrumb": ['properties', field_name]
             })
         
         catalog.streams.append(CatalogEntry(
@@ -75,35 +75,35 @@ def discover():
         "teams_table"
     ]
     
-    # Checking existing streams in the catalog dictionary
+    # We verify this to ensure all mandatory streams are available even if schema files are missing
     present_streams = {stream['tap_stream_id'] for stream in catalog_dict['streams']}
     
-    # Adding any missing required streams to the catalog dictionary
+    # Ensure all required streams are included even if schema is missing
     for stream_name in required_streams:
         if stream_name not in present_streams:
-            # LOGGER.info("Adding missing required stream: %s", stream_name)
+            LOGGER.info("Adding missing required stream: %s", stream_name)
             
             # Create a minimal stream entry that will be visible in the output
             catalog_dict['streams'].append({
-                'stream': stream_name,
-                'tap_stream_id': stream_name,
-                'schema': {
-                    'type': ['null', 'object'],
-                    'properties': {},
-                    'additionalProperties': False
+                "stream": stream_name,
+                "tap_stream_id": stream_name,
+                "schema": {
+                    "type": ['null', 'object'],
+                    "properties": {},
+                    "additionalProperties": False
                 },
-                'key_properties': [],
-                'metadata': [
+                "key_properties": [],
+                "metadata": [
                     {
-                        'metadata': {
-                            'selected': True
+                        "metadata": {
+                            "selected": True
                         },
-                        'breadcrumb': []
+                        "breadcrumb": []
                     }
                 ]
             })
     
-    # Making sure that all streams have selection metadata in the catalog dictionary
+    # This ensure singer tools recognize all streams in the catalog dictionary
     for stream in catalog_dict['streams']:
         has_selection = False
         for metadata_item in stream.get('metadata', []):
@@ -112,12 +112,12 @@ def discover():
                 break
                 
         if not has_selection:
-            # LOGGER.info("Adding selection metadata to stream: %s", stream['tap_stream_id'])
+            LOGGER.info("Adding selection metadata to stream: %s", stream['tap_stream_id'])
             stream.setdefault('metadata', []).insert(0, {
-                'metadata': {
-                    'selected': True
+                "metadata": {
+                    "selected": True
                 },
-                'breadcrumb': []
+                "breadcrumb": []
             })
     
     # Convert back to a Catalog object
@@ -167,3 +167,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
