@@ -102,3 +102,6 @@ tags
 singer-check-tap-data
 state.json
 catalog.json
+output.json
+convert_json_csv.py
+notes_frontapp.txt
