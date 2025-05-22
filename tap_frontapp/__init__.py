@@ -18,7 +18,7 @@ REQUIRED_CONFIG_KEYS = ["token"]
 LOGGER = singer.get_logger()
 
 
-def get_abs_path(path: str):
+def get_abs_path(path):
     """Returns absolute path for a given relative path."""
     return os.path.join(os.path.dirname(os.path.realpath(__file__)), path)
 
