@@ -1,4 +1,3 @@
-"""Module for syncing selected FrontApp streams using Singer framework."""
 
 import singer
 from tap_frontapp.streams import sync_selected_streams
