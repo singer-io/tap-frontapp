@@ -26,7 +26,7 @@ def sync(atx):
     LOGGER.info("Selected streams: %s", streams_to_sync)
 
     last_stream = singer.get_currently_syncing(state)
-    LOGGER.info("Last stream synced (if resuming): %s", last_stream)
+    LOGGER.info("Currently syncing: %s", last_stream)
 
     for stream_name in STATIC_SCHEMA_STREAM_IDS:
         load_and_write_schema(stream_name)
