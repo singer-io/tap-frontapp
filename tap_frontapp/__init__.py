@@ -7,7 +7,6 @@ import json
 import singer
 from singer import utils
 from singer.catalog import Catalog
-from . import streams
 from .context import Context
 from .discover import discover
 from .sync import sync
