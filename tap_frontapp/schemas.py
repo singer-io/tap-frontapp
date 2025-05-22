@@ -1,3 +1,4 @@
+"""Schema definitions and metadata handling for Frontapp streams."""
 import os
 import re
 import singer
@@ -6,6 +7,7 @@ from singer import metadata, utils
 LOGGER = singer.get_logger()
 
 class IDS:  # pylint: disable=too-few-public-methods
+    """Stream identifier constants."""
     ACCOUNTS_TABLE = "accounts_table"
     CHANNELS_TABLE = "channels_table"
     INBOXES_TABLE = "inboxes_table"
@@ -31,35 +33,33 @@ PK_FIELDS = {
     IDS.TEAMS_TABLE: ["analytics_date", "analytics_range", "report_id", "metric_id"],
 }
 
-
-def normalize_fieldname(fieldname):
+def normalize_fieldname(fieldname: str) -> str:
+    """Normalize field names to snake_case."""
     fieldname = fieldname.lower()
     fieldname = re.sub(r"[\s\-]", "_", fieldname)
     return re.sub(r"[^a-z0-9_]", "", fieldname)
 
-
-def get_abs_path(path):
+def get_abs_path(path: str) -> str:
+    """Get absolute path for schema files."""
     return os.path.join(os.path.dirname(os.path.realpath(__file__)), path)
 
-
-def load_schema(tap_stream_id):
+def load_schema(tap_stream_id: str) -> dict:
+    """Load schema file for specified stream."""
     path = f"schemas/{tap_stream_id}.json"
     return utils.load_json(get_abs_path(path))
 
-
-def load_and_write_schema(tap_stream_id):
+def load_and_write_schema(tap_stream_id: str) -> None:
+    """Write schema to singer catalog."""
     schema = load_schema(tap_stream_id)
     singer.write_schema(tap_stream_id, schema, PK_FIELDS[tap_stream_id])
 
-
-def get_schemas():
-    """Loads all schemas and constructs metadata using Singer standards."""
+def get_schemas() -> tuple[dict, dict]:
+    """Load all schemas and construct metadata using Singer standards."""
     schemas = {}
     metadata_map = {}
 
     for stream_id in STATIC_SCHEMA_STREAM_IDS:
-        raw_schema = load_schema(stream_id)
-        schema = utils.load_json(get_abs_path(f"schemas/{stream_id}.json"))
+        schema = load_schema(stream_id)
         mdata = metadata.new()
 
         # Stream-level metadata
@@ -69,7 +69,7 @@ def get_schemas():
         mdata = metadata.write(mdata, (), "table-key-properties", PK_FIELDS[stream_id])
 
         # Field-level metadata
-        for field_name in schema["properties"].keys():
+        for field_name in schema["properties"]:
             inclusion = "automatic" if field_name in PK_FIELDS[stream_id] else "available"
             mdata = metadata.write(mdata, ("properties", field_name), "inclusion", inclusion)
             mdata = metadata.write(mdata, ("properties", field_name), "selected-by-default", True)
