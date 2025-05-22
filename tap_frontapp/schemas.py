@@ -33,27 +33,27 @@ PK_FIELDS = {
     IDS.TEAMS_TABLE: ["analytics_date", "analytics_range", "report_id", "metric_id"],
 }
 
-def normalize_fieldname(fieldname: str) -> str:
+def normalize_fieldname(fieldname):
     """Normalize field names to snake_case."""
     fieldname = fieldname.lower()
     fieldname = re.sub(r"[\s\-]", "_", fieldname)
     return re.sub(r"[^a-z0-9_]", "", fieldname)
 
-def get_abs_path(path: str) -> str:
+def get_abs_path(path):
     """Get absolute path for schema files."""
     return os.path.join(os.path.dirname(os.path.realpath(__file__)), path)
 
-def load_schema(tap_stream_id: str) -> dict:
+def load_schema(tap_stream_id):
     """Load schema file for specified stream."""
     path = f"schemas/{tap_stream_id}.json"
     return utils.load_json(get_abs_path(path))
 
-def load_and_write_schema(tap_stream_id: str) -> None:
+def load_and_write_schema(tap_stream_id):
     """Write schema to singer catalog."""
     schema = load_schema(tap_stream_id)
     singer.write_schema(tap_stream_id, schema, PK_FIELDS[tap_stream_id])
 
-def get_schemas() -> tuple[dict, dict]:
+def get_schemas():
     """Load all schemas and construct metadata using Singer standards."""
     schemas = {}
     metadata_map = {}
