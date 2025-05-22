@@ -28,7 +28,7 @@ def load_schema(tap_stream_id):
     path = f"schemas/{tap_stream_id}.json"
     schema = utils.load_json(get_abs_path(path))
     dependencies = schema.pop("tap_schema_dependencies", [])
-    refs = {sub_id: load_schema(sub_id) for sub_id in dependencies}
+    refs = {sub_stream_id: load_schema(sub_stream_id) for sub_stream_id in dependencies}
     if refs:
         singer.resolve_schema_references(schema, refs)
     return schema
