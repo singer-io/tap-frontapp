@@ -35,16 +35,13 @@ def load_schema(tap_stream_id):
 @utils.handle_top_exception(LOGGER)
 def main():
     args = utils.parse_args(REQUIRED_CONFIG_KEYS)
-    #Validate credentials early
-    validate_credentials(args.config["token'])
-                         
-    atx = Context(args.config, args.state)
 
     if args.discover:
         validate_credentials(args.config["token"])
         catalog = discover()
         json.dump(catalog.to_dict(), sys.stdout)
     else:
+        atx = Context(args.config, args.state)
         atx.catalog = Catalog.from_dict(args.properties) if args.properties else discover()
         sync(atx)
 
