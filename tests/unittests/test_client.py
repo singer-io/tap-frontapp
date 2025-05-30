@@ -75,7 +75,3 @@ class TestFrontAppClient(unittest.TestCase):
         client = Client(config={"token": "test-token"})
         with self.assertRaises(ConnectionError):
             client.get_report_metrics("https://api2.frontapp.com/analytics/reports/xyz")
-
-
-if __name__ == "__main__":
-    unittest.main()
