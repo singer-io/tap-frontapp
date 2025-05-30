@@ -8,7 +8,7 @@ import singer
 from singer import utils
 from singer.catalog import Catalog
 from .context import Context
-from .discover import discover
+from .discover import discover, validate_credentials
 from .sync import sync
 from . import schemas
 
@@ -41,6 +41,7 @@ def main():
     atx = Context(args.config, args.state)
 
     if args.discover:
+        validate_credentials(args.config["token"])
         catalog = discover()
         json.dump(catalog.to_dict(), sys.stdout)
     else:
