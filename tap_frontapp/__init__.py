@@ -31,20 +31,6 @@ def load_schema(tap_stream_id):
         singer.resolve_schema_references(schema, refs)
     return schema
 
-def validate_credentials(token):
-    """Validates the FrontApp token using a simple API call"""
-    headers = {"Authorization": f"Bearer {token}"}
-    try:
-        response = requests.get("https://api2.frontapp.com/me", headers=headers, timeout=10)
-        if response.status_code == 200:
-            LOGGER.info("Frontapp credentials validated successfully.")
-        else:
-            LOGGER.critical("Invalid Frontapp credentials. Status code: %s", response.status_code)
-            sys.exit(1)
-    except requests.exceptions.RequestException as err:
-        LOGGER.critical("Credential validation failed: %s", str(err))
-        sys.exit(1)
-
 
 @utils.handle_top_exception(LOGGER)
 def main():
