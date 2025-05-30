@@ -1,3 +1,7 @@
+"""Discovery module for the FrontApp tap."""
+
+import sys
+import requests
 import singer
 from singer import metadata
 from singer.catalog import Catalog, CatalogEntry, Schema
@@ -5,8 +9,9 @@ from .schemas import get_schemas
 
 LOGGER = singer.get_logger()
 
+
 def validate_credentials(token):
-    """Validates the FrontApp token using a simple API call"""
+    """Validates the FrontApp token using a simple API call."""
     headers = {"Authorization": f"Bearer {token}"}
     try:
         response = requests.get("https://api2.frontapp.com/me", headers=headers, timeout=10)
@@ -19,10 +24,11 @@ def validate_credentials(token):
         LOGGER.critical("Credential validation failed: %s", str(err))
         sys.exit(1)
 
+
 def discover():
     """Run the discovery mode, prepare the catalog file and return the catalog."""
     schemas, field_metadata = get_schemas()
-    LOGGER.info("Schemas loaded: %s , list(schemas.keys()))
+    LOGGER.info("Schemas loaded: %s", list(schemas.keys()))
 
     catalog = Catalog([])
 
@@ -31,12 +37,10 @@ def discover():
             schema = Schema.from_dict(schema_dict)
             mdata = field_metadata[stream_name]
         except Exception as err:
-            LOGGER.error(err)
-            LOGGER.error(f"stream_name: {stream_name}")
-            LOGGER.error(f"type schema_dict: {type(schema_dict)}")
+            LOGGER.error("Error while processing stream '%s': %s", stream_name, err)
             raise err
 
-        key_properties = mdata.get((), {}).get("table-key-properties",[])
+        key_properties = mdata.get((), {}).get("table-key-properties", [])
 
         catalog.streams.append(
             CatalogEntry(
