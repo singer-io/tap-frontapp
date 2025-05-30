@@ -5,6 +5,19 @@ from .schemas import get_schemas
 
 LOGGER = singer.get_logger()
 
+def validate_credentials(token):
+    """Validates the FrontApp token using a simple API call"""
+    headers = {"Authorization": f"Bearer {token}"}
+    try:
+        response = requests.get("https://api2.frontapp.com/me", headers=headers, timeout=10)
+        if response.status_code == 200:
+            LOGGER.info("Frontapp credentials validated successfully.")
+        else:
+            LOGGER.critical("Invalid Frontapp credentials. Status code: %s", response.status_code)
+            sys.exit(1)
+    except requests.exceptions.RequestException as err:
+        LOGGER.critical("Credential validation failed: %s", str(err))
+        sys.exit(1)
 
 def discover():
     """Run the discovery mode, prepare the catalog file and return the catalog."""
