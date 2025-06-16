@@ -1,4 +1,5 @@
 version: 2
+
 jobs:
   build:
     docker:
@@ -6,6 +7,7 @@ jobs:
 
     steps:
       - checkout
+
       - run:
           name: 'Setup virtual env'
           command: |
@@ -13,6 +15,12 @@ jobs:
             source /usr/local/share/virtualenvs/tap-frontapp/bin/activate
             pip install -U 'pip==22.2.2' 'setuptools==65.3.0'
             pip install .[dev]
+
+      - run:
+          name: "JSON Validator"
+          command: |
+            stitch-validate-json tap_frontapp/schemas/*.json
+
       - run:
           name: 'pylint'
           command: |
