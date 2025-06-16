@@ -64,14 +64,12 @@ def get_schemas():
 
         # Stream-level metadata
         mdata = metadata.write(mdata, (), "inclusion", "available")
-        mdata = metadata.write(mdata, (), "selected-by-default", True)
         mdata = metadata.write(mdata, (), "table-key-properties", PK_FIELDS[stream_id])
 
         # Field-level metadata
         for field_name in schema["properties"]:
             inclusion = "automatic" if field_name in PK_FIELDS[stream_id] else "available"
             mdata = metadata.write(mdata, ("properties", field_name), "inclusion", inclusion)
-            mdata = metadata.write(mdata, ("properties", field_name), "selected-by-default", True)
 
         schemas[stream_id] = schema
         metadata_map[stream_id] = mdata
