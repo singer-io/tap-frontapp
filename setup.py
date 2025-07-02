@@ -13,7 +13,7 @@ setup(
         "singer-python==5.13.2",
         "pendulum",
         "ratelimit",
-        "backoff==1.8.0",
+        "backoff==1.10.0",
         "requests==2.32.4",
     ],
     entry_points="""
