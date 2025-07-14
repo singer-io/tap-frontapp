@@ -10,11 +10,11 @@ setup(
     url="http://singer.io",
     classifiers=["Programming Language :: Python :: 3 :: Only"],
     install_requires=[
-        "singer-python==5.4.0",
+        "singer-python==5.13.2",
         "pendulum",
         "ratelimit",
-        "backoff==1.3.2",
-        "requests==2.31.0",
+        "backoff==1.10.0",
+        "requests==2.32.4",
     ],
     entry_points="""
     [console_scripts]
