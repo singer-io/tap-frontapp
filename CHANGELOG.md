@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.0.1
+  * Bump dependency versions for twistlock compliance [#31](https://github.com/singer-io/tap-frontapp/pull/31)
+
 ## 2.0.0
   * Implementing new Frontapp [Analytics API](https://dev.frontapp.com/changelog/core-api-analytics-and-exports-updates) [#17](https://github.com/singer-io/tap-frontapp/pull/17)
 
