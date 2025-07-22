@@ -1,161 +1,136 @@
 {
     "type": ["null", "object"],
-    "selected": true,
     "additionalProperties": false,
     "properties": {
-		"report_id": {
-			"type": ["null", "string"],
-			"selected": true
-		},
-		"analytics_date": {
-			"type": ["null", "string"],
-			"selected": true
-		},
-		"analytics_range": {
-			"type": ["null", "string"],
-			"selected": true
-		},
-		"metric_id": {
-			"type": ["null", "string"],
-			"selected": true
-		},
-		"metric_description": {
-			"type": ["null", "string"],
-			"selected": true
-		},
-		"avg_first_response_time": {
-			"selected": true,
-			"type": [
-				"null",
-				"number"
-			]
-		},
-		"avg_handle_time": {
-			"selected": true,
-			"type": [
-				"null",
-				"number"
-			]
-		},
-		"avg_response_time": {
-			"selected": true,
-			"type": [
-				"null",
-				"number"
-			]
-		},
-		"avg_sla_breach_time": {
-			"selected": true,
-			"type": [
-				"null",
-				"number"
-			]
-		},
-		"avg_total_reply_time": {
-			"selected": true,
-			"type": [
-				"null",
-				"number"
-			]
-		},
-		"new_segments_count": {
-			"selected": true,
-			"type": [
-				"null",
-				"number"
-			]
-		},
-		"num_active_segments_full": {
-			"selected": true,
-			"type": [
-				"null",
-				"number"
-			]
-		},
-		"num_archived_segments": {
-			"selected": true,
-			"type": [
-				"null",
-				"number"
-			]
-		},
-		"num_archived_segments_with_reply": {
-			"selected": true,
-			"type": [
-				"null",
-				"number"
-			]
-		},
-		"num_csat_survey_response": {
-			"selected": true,
-			"type": [
-				"null",
-				"number"
-			]
-		},
-		"num_messages_received": {
-			"selected": true,
-			"type": [
-				"null",
-				"number"
-			]
-		},
-		"num_messages_sent": {
-			"selected": true,
-			"type": [
-				"null",
-				"number"
-			]
-		},
-		"num_sla_breach": {
-			"selected": true,
-			"type": [
-				"null",
-				"number"
-			]
-		},
-		"pct_csat_survey_satisfaction": {
-			"selected": true,
-			"type": [
-				"null",
-				"number"
-			]
-		},
-		"pct_tagged_conversations": {
-			"selected": true,
-			"type": [
-				"null",
-				"number"
-			]
-		},
-		"num_open_segments_start": {
-			"selected": true,
-			"type": [
-				"null",
-				"number"
-			]
-		},
-		"num_workload_segments": {
-			"selected": true,
-			"type": [
-				"null",
-				"number"
-			]
-		},
-		"num_closed_segments": {
-			"selected": true,
-			"type": [
-				"null",
-				"number"
-			]
-		},
-		"num_open_segments_end": {
-			"selected": true,
-			"type": [
-				"null",
-				"number"
-			]
-		}
+        "report_id": {
+            "type": ["null", "string"]
+        },
+        "analytics_date": {
+            "type": ["null", "string"]
+        },
+        "analytics_range": {
+            "type": ["null", "string"]
+        },
+        "metric_id": {
+            "type": ["null", "string"]
+        },
+        "metric_description": {
+            "type": ["null", "string"]
+        },
+        "avg_first_response_time": {
+            "type": [
+                "null",
+                "number"
+            ]
+        },
+        "avg_handle_time": {
+            "type": [
+                "null",
+                "number"
+            ]
+        },
+        "avg_response_time": {
+            "type": [
+                "null",
+                "number"
+            ]
+        },
+        "avg_sla_breach_time": {
+            "type": [
+                "null",
+                "number"
+            ]
+        },
+        "avg_total_reply_time": {
+            "type": [
+                "null",
+                "number"
+            ]
+        },
+        "new_segments_count": {
+            "type": [
+                "null",
+                "number"
+            ]
+        },
+        "num_active_segments_full": {
+            "type": [
+                "null",
+                "number"
+            ]
+        },
+        "num_archived_segments": {
+            "type": [
+                "null",
+                "number"
+            ]
+        },
+        "num_archived_segments_with_reply": {
+            "type": [
+                "null",
+                "number"
+            ]
+        },
+        "num_csat_survey_response": {
+            "type": [
+                "null",
+                "number"
+            ]
+        },
+        "num_messages_received": {
+            "type": [
+                "null",
+                "number"
+            ]
+        },
+        "num_messages_sent": {
+            "type": [
+                "null",
+                "number"
+            ]
+        },
+        "num_sla_breach": {
+            "type": [
+                "null",
+                "number"
+            ]
+        },
+        "pct_csat_survey_satisfaction": {
+            "type": [
+                "null",
+                "number"
+            ]
+        },
+        "pct_tagged_conversations": {
+            "type": [
+                "null",
+                "number"
+            ]
+        },
+        "num_open_segments_start": {
+            "type": [
+                "null",
+                "number"
+            ]
+        },
+        "num_workload_segments": {
+            "type": [
+                "null",
+                "number"
+            ]
+        },
+        "num_closed_segments": {
+            "type": [
+                "null",
+                "number"
+            ]
+        },
+        "num_open_segments_end": {
+            "type": [
+                "null",
+                "number"
+            ]
+        }
     },
     "key_properties": ["report_id"],
     "bookmark_properties": ["analytics_date","analytics_range"]
