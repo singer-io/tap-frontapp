@@ -6,7 +6,7 @@ import backoff
 import singer
 from singer import metrics
 
-RETRY_RATE_LIMIT = 360
+RETRY_RATE_LIMIT = 300
 
 LOGGER = singer.get_logger()
 
