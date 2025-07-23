@@ -119,7 +119,7 @@ def select_fields(mdata, obj):
 @on_exception(constant, MetricsRateLimitException, max_tries=5, interval=60)
 @on_exception(expo, RateLimitException, max_tries=5)
 @sleep_and_retry
-@limits(calls=1, period=61)  # 60 seconds needed to be padded by 1 second to work
+@limits(calls=1, period=2)  # Reference: https://dev.frontapp.com/docs/rate-limiting
 def get_report_metrics(atx, report_url):
     return atx.client.get_report_metrics(report_url)
 
