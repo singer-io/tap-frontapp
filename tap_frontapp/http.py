@@ -45,14 +45,8 @@ class Client(object):
         @backoff.on_exception(
             self._rate_limit_backoff,
             RateLimitException,
-            max_tries=5,
+            max_tries=2,
             jitter=None,
-        )
-        @backoff.on_exception(
-            backoff.expo,
-            RateLimitException,
-            max_tries=10,
-            factor=2
         )
         def _call():
             if self.calls_remaining is not None and self.calls_remaining == 0:

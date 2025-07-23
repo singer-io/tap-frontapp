@@ -124,6 +124,8 @@ def get_report_metrics(atx, report_url):
     return atx.client.get_report_metrics(report_url)
 
 
+@sleep_and_retry
+@limits(calls=1, period=1)  # Reference: https://dev.frontapp.com/docs/rate-limiting#additional-proportional-limiting
 def create_report(atx, start_date, end_date, filters):
     params = {
         'start': start_date,
