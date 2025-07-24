@@ -10,13 +10,13 @@ jobs:
           command: |
             uv venv --python=3.9 /usr/local/share/virtualenvs/tap-frontapp
             source /usr/local/share/virtualenvs/tap-frontapp/bin/activate
-            pip install -U 'pip==22.2.2' 'setuptools==65.3.0'
-            pip install .[dev]
+            uv pip install -U 'pip==22.2.2' 'setuptools==65.3.0'
+            uv pip install .[dev]
       - run:
           name: 'pylint'
           command: |
             source /usr/local/share/virtualenvs/tap-frontapp/bin/activate
-            pip install pylint
+            uv pip install pylint
             pylint tap_frontapp -d C,R,W
 
 workflows:
