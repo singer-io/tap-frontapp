@@ -1,10 +1,12 @@
 version: 2
+
 jobs:
   build:
     docker:
       - image: 218546966473.dkr.ecr.us-east-1.amazonaws.com/circle-ci:stitch-tap-tester-uv
     steps:
       - checkout
+
       - run:
           name: 'Setup virtual env'
           command: |
@@ -12,6 +14,11 @@ jobs:
             source /usr/local/share/virtualenvs/tap-frontapp/bin/activate
             uv pip install -U 'pip==22.2.2' 'setuptools==65.3.0'
             uv pip install .[dev]
+      - run:
+          name: "JSON Validator"
+          command: |
+            source /usr/local/share/virtualenvs/tap-frontapp/bin/activate
+            stitch-validate-json tap_frontapp/schemas/*.json
       - run:
           name: 'pylint'
           command: |

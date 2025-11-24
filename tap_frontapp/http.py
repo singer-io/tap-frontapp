@@ -6,6 +6,8 @@ import backoff
 import singer
 from singer import metrics
 
+RETRY_RATE_LIMIT = 60
+
 LOGGER = singer.get_logger()
 
 
@@ -26,52 +28,71 @@ class Client(object):
 
         self.calls_remaining = None
         self.limit_reset = None
+        self._retry_after = RETRY_RATE_LIMIT
 
     def url(self, path):
         return self.BASE_URL + path
 
-    @backoff.on_exception(backoff.expo,
-                          RateLimitException,
-                          max_tries=10,
-                          factor=2)
+    def _rate_limit_backoff(self):
+        """
+        Bound wait‐generator: on each retry backoff will call next()
+        and sleep for self._retry_after seconds.
+        """
+        while True:
+            yield self._retry_after
+
     def request(self, method, url, **kwargs):
-        if self.calls_remaining is not None and self.calls_remaining == 0:
-            wait = self.limit_reset - int(time.monotonic())
-            if 0 < wait <= 300:
-                time.sleep(wait)
+        @backoff.on_exception(
+            self._rate_limit_backoff,
+            RateLimitException,
+            max_tries=2,
+            jitter=None,
+        )
+        def _call():
+            if self.calls_remaining is not None and self.calls_remaining == 0:
+                wait = self.limit_reset - int(time.monotonic())
+                if 0 < wait <= 300:
+                    time.sleep(wait)
 
-        if 'headers' not in kwargs:
-            kwargs['headers'] = {}
-        if self.token:
-            kwargs['headers']['Authorization'] = self.token
+            if 'headers' not in kwargs:
+                kwargs['headers'] = {}
+            if self.token:
+                kwargs['headers']['Authorization'] = self.token
 
-        kwargs['headers']['Content-Type'] = 'application/json'
+            kwargs['headers']['Content-Type'] = 'application/json'
 
-        if 'endpoint' in kwargs:
-            endpoint = kwargs['endpoint']
-            del kwargs['endpoint']
-            with metrics.http_request_timer(endpoint) as timer:
+            if 'endpoint' in kwargs:
+                endpoint = kwargs['endpoint']
+                del kwargs['endpoint']
+                with metrics.http_request_timer(endpoint) as timer:
+                    response = requests.request(method, url, **kwargs)
+                    timer.tags[metrics.Tag.http_status_code] = response.status_code
+            else:
                 response = requests.request(method, url, **kwargs)
-                timer.tags[metrics.Tag.http_status_code] = response.status_code
 
+            self.calls_remaining = int(response.headers['X-Ratelimit-Remaining'])
+            self.limit_reset = int(float(response.headers['X-Ratelimit-Reset']))
 
-        else:
-            response = requests.request(method, url, **kwargs)
+            if response.status_code in [429, 503]:
+                try:
+                    self._retry_after = int(
+                        float(response.headers.get("retry-after", RETRY_RATE_LIMIT))
+                    )
+                except (TypeError, ValueError):
+                    self._retry_after = RETRY_RATE_LIMIT
 
-        self.calls_remaining = int(response.headers['X-Ratelimit-Remaining'])
-        self.limit_reset = int(float(response.headers['X-Ratelimit-Reset']))
+                raise RateLimitException(response.text)
+            if response.status_code == 423:
+                raise MetricsRateLimitException()
+            try:
+                response.raise_for_status()
+            except:
+                LOGGER.error('{} - {}'.format(response.status_code, response.text))
+                raise
 
-        if response.status_code in [429, 503]:
-            raise RateLimitException(response.text)
-        if response.status_code == 423:
-            raise MetricsRateLimitException()
-        try:
-            response.raise_for_status()
-        except:
-            LOGGER.error('{} - {}'.format(response.status_code, response.text))
-            raise
+            return response
 
-        return response
+        return _call()
 
     def get_report_metrics(self, url, **kwargs):
         response = self.request('get', url, **kwargs)
