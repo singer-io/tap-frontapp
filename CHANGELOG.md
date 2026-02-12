@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.2.0
+  * Upgraded dependencies versions and added unit tests [#38](https://github.com/singer-io/tap-frontapp/pull/38)
+
 ## 2.1.0
   * Bump dependency versions for twistlock compliance [#37](https://github.com/singer-io/tap-frontapp/pull/37)
 

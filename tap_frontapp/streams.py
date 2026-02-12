@@ -154,7 +154,7 @@ def sync_metric(atx, metric_name, start_date, end_date):
 
         with singer.metrics.job_timer('daily_aggregated_metric'):
             start = time.monotonic()
-            start_date_formatted = datetime.datetime.utcfromtimestamp(start_date).strftime('%Y-%m-%d')
+            start_date_formatted = datetime.datetime.fromtimestamp(start_date, tz=datetime.timezone.utc).strftime('%Y-%m-%d')
             # we've really moved this functionality to the request in the http script
             # so we don't expect that this will actually have to run mult times
             while True:
@@ -201,7 +201,8 @@ def sync_metrics(atx, metric_name):
     #   set to the prior business day before we can use it.
     now = datetime.datetime.now()
     s_d = now.replace(hour=0, minute=0, second=0, microsecond=0)
-    start_date = pendulum.parse(atx.config.get('start_date', s_d + datetime.timedelta(days=-1, hours=0)))
+    default_start = (s_d + datetime.timedelta(days=-1, hours=0)).strftime("%Y-%m-%d %H:%M:%S")
+    start_date = pendulum.parse(atx.config.get('start_date', default_start))
     LOGGER.info('start_date: {} '.format(start_date))
 
     # end date is not usually specified in the config file by default so end_date is now.
@@ -235,5 +236,10 @@ def sync_metrics(atx, metric_name):
 
 
 def sync_selected_streams(atx):
+    from tap_frontapp.sync import update_currently_syncing
+
     for selected_stream in atx.selected_stream_ids:
+        update_currently_syncing(atx.state, selected_stream)
         sync_metrics(atx, selected_stream)
+
+    update_currently_syncing(atx.state, None)

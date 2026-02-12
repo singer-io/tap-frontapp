@@ -45,15 +45,5 @@ class Context(object):
             val = val.isoformat()
         bks_.write_bookmark(self.state, path[0], path[1], val)
 
-    def get_offset(self, path):
-        off = bks_.get_offset(self.state, path[0])
-        return (off or {}).get(path[1])
-
-    def set_offset(self, path, val):
-        bks_.set_offset(self.state, path[0], path[1], val)
-
-    def clear_offsets(self, tap_stream_id):
-        bks_.clear_offset(self.state, tap_stream_id)
-
     def write_state(self):
         singer.write_state(self.state)
