@@ -154,7 +154,7 @@ def sync_metric(atx, metric_name, start_date, end_date):
 
         with singer.metrics.job_timer('daily_aggregated_metric'):
             start = time.monotonic()
-            start_date_formatted = datetime.datetime.fromtimestamp(start_date, tz=datetime.timezone.utc).strftime('%Y-%m-%d')
+            start_date_formatted = datetime.datetime.fromtimestamp(start_date, tz=datetime.timezone.utc).strftime('%Y-%m-%dT00:00:00Z')
             # we've really moved this functionality to the request in the http script
             # so we don't expect that this will actually have to run mult times
             while True:

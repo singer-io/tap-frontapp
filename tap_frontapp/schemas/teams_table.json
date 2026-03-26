@@ -6,7 +6,8 @@
 			"type": ["null", "string"]
 		},
 		"analytics_date": {
-			"type": ["null", "string"]
+			"type": ["null", "string"],
+			"format": "date-time"
 		},
 		"analytics_range": {
 			"type": ["null", "string"]
