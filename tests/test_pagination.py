@@ -14,12 +14,8 @@ class FrontAppPaginationTest(PaginationTest, FrontAppBaseTest):
         # FrontApp analytics streams return one daily report per entity.
         # Most test environments do not have enough entities to exceed one page.
         # Exclude all streams until a test environment with sufficient data is available.
-        streams_to_exclude = {
-            "accounts_table",   # sandbox typically has < API_LIMIT entities
+        streams_to_exclude = {   # sandbox typically has < API_LIMIT entities
             "channels_table",
             "inboxes_table",
-            "tags_table",
-            "teammates_table",
-            "teams_table",
         }
         return self.expected_stream_names().difference(streams_to_exclude)

@@ -9,6 +9,7 @@ setup(
     author="bytcode.io",
     url="http://singer.io",
     classifiers=["Programming Language :: Python :: 3 :: Only"],
+    py_modules=["tap_frontapp"],
     install_requires=[
         "singer-python==6.8.0",
         "pendulum==3.2.0",
@@ -22,7 +23,7 @@ setup(
     """,
     packages=find_packages(),
     package_data = {
-        "schemas": ["tap_frontapp/schemas/*.json"]
+        "tap_frontapp": ["schemas/*.json"]
     },
     include_package_data=True
 )

@@ -27,8 +27,6 @@ class FrontAppBaseTest(BaseCase):
     in tap-tester tests. Shared tap-specific methods (as needed).
     """
 
-    start_date = "2019-01-01T00:00:00Z"
-
     @staticmethod
     def tap_name():
         """The name of the tap."""
@@ -39,22 +37,20 @@ class FrontAppBaseTest(BaseCase):
         """The Stitch connection type slug."""
         return "platform.frontapp"
 
-    def setUp(self):
-        """Fail fast if required credentials env vars are missing."""
+    def setUp(self, logging=True):
+        """Fail fast if required credentials env vars are missing.
+
+        The ``logging`` argument is accepted for compatibility with
+        tap-tester's discovery test harness, which calls ``setUp``
+        with this keyword. It is not used here.
+        """
         missing = [v for v in ["TAP_FRONTAPP_TOKEN"] if not os.getenv(v)]
         if missing:
             raise Exception(f"Missing required environment variables: {missing}")
 
     def get_properties(self, original: bool = True):
         """Configuration properties required for the tap."""
-        return_value = {
-            "start_date": self.start_date,
-        }
-        if original:
-            return return_value
-
-        return_value["start_date"] = self.start_date
-        return return_value
+        return {}
 
     @staticmethod
     def get_credentials():
@@ -113,3 +109,28 @@ class FrontAppBaseTest(BaseCase):
                 cls.API_LIMIT: 1,
             },
         }
+
+    def get_bookmark_value(self, state, stream):
+        """Return the effective bookmark value for a stream.
+
+        FrontApp stores bookmarks under ``date_to_resume`` rather than
+        the replication key name (``analytics_date``). For tests, we
+        normalize this to a simple ``YYYY-MM-DD`` string so
+        tap-tester's ``parse_date`` helper can consume it.
+        """
+        stream_bookmark = (state or {}).get("bookmarks", {}).get(stream, {})
+
+        # Prefer an explicit analytics_date bookmark if present.
+        if "analytics_date" in stream_bookmark:
+            return stream_bookmark["analytics_date"]
+
+        # Fallback to the tap's native date_to_resume field.
+        raw = stream_bookmark.get("date_to_resume")
+        if not raw:
+            return None
+
+        # raw is typically "YYYY-MM-DD HH:MM:SS"; strip time portion
+        # so it matches one of BaseCase.parse_date accepted formats.
+        if isinstance(raw, str):
+            return raw.split(" ", 1)[0]
+        return raw

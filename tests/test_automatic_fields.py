@@ -12,6 +12,7 @@ class FrontAppAutomaticFields(MinimumSelectionTest, FrontAppBaseTest):
         return "tap_tester_frontapp_automatic_fields_test"
 
     def streams_to_test(self):
-        # Exclude streams with known missing test data
-        streams_to_exclude = set()
+        # channels_table and inboxes_table return 0 records as no entities are configured
+        # in this FrontApp account
+        streams_to_exclude = {"channels_table", "inboxes_table"}
         return self.expected_stream_names().difference(streams_to_exclude)

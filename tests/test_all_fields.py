@@ -21,5 +21,7 @@ class FrontAppAllFields(AllFieldsTest, FrontAppBaseTest):
 
     def streams_to_test(self):
         # Exclude streams with no test data or no API access in the test environment
-        streams_to_exclude = set()
+        # channels_table and inboxes_table return 0 records as no entities are configured
+        # in this FrontApp account
+        streams_to_exclude = {"channels_table", "inboxes_table"}
         return self.expected_stream_names().difference(streams_to_exclude)
