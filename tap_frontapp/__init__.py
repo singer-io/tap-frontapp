@@ -70,7 +70,9 @@ def main():
     else:
         atx = Context(args.config, args.state)
 
-        catalog_obj = args.properties or getattr(args, "catalog", None)
+        catalog_obj = getattr(args, "properties", None)
+        if catalog_obj is None:
+            catalog_obj = getattr(args, "catalog", None)
         if catalog_obj is None:
             catalog_obj = discover()
         elif isinstance(catalog_obj, dict):
