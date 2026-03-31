@@ -21,7 +21,15 @@ def sync(atx):
     catalog = atx.catalog
     state = atx.state
 
-    streams_to_sync = [s.tap_stream_id for s in catalog.get_selected_streams(state)]
+    # Use a single source of truth for selected streams. When the
+    # Context has populated ``selected_stream_ids`` from Singer
+    # metadata, prefer that set; otherwise fall back to the catalog's
+    # helper so tests using simple mocks still work.
+    selected_stream_ids = getattr(atx, "selected_stream_ids", None)
+    if selected_stream_ids is not None:
+        streams_to_sync = list(selected_stream_ids)
+    else:
+        streams_to_sync = [s.tap_stream_id for s in catalog.get_selected_streams(state)]
     LOGGER.info("Selected streams: %s", streams_to_sync)
 
     last_stream = singer.get_currently_syncing(state)
