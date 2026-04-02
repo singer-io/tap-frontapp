@@ -60,16 +60,19 @@ def get_schemas():
 
     for stream_id in STATIC_SCHEMA_STREAM_IDS:
         schema = load_schema(stream_id)
-        mdata = metadata.new()
+        # Use Singer's standard metadata
+        mdata = metadata.get_standard_metadata(
+            schema=schema,
+            key_properties=PK_FIELDS[stream_id],
+            valid_replication_keys=["analytics_date"],
+            replication_method="INCREMENTAL",
+        )
 
-        # Stream-level metadata
-        mdata = metadata.write(mdata, (), "inclusion", "available")
-        mdata = metadata.write(mdata, (), "table-key-properties", PK_FIELDS[stream_id])
-
-        # Field-level metadata
-        for field_name in schema["properties"]:
-            inclusion = "automatic" if field_name in PK_FIELDS[stream_id] else "available"
-            mdata = metadata.write(mdata, ("properties", field_name), "inclusion", inclusion)
+        mdata = metadata.to_map(mdata)
+        automatic_fields = set(PK_FIELDS[stream_id]) | {"analytics_date"}
+        for field_name in schema.get("properties", {}).keys():
+            if field_name in automatic_fields:
+                mdata = metadata.write(mdata, ("properties", field_name), "inclusion", "automatic")
 
         schemas[stream_id] = schema
         metadata_map[stream_id] = mdata

@@ -143,7 +143,9 @@ def create_report(atx, start_date, end_date, filters):
             raise e
 
 
-def sync_metric(atx, metric_name, start_date, end_date):
+def sync_metric(atx, metric_name, start_date, end_date, mdata=None):
+    if mdata is None:
+        mdata = {}
     for metric in atx.client.list_metrics(path=METRIC_API_PATH[metric_name]):
         metric_id = metric['id']
         metric_description = metric[METRIC_API_DESCRIPTION_KEY[metric_name]]
@@ -184,6 +186,9 @@ def sync_metric(atx, metric_name, start_date, end_date):
             "metric_description": metric_description,
             **{report_metric["id"]: report_metric["value"] for report_metric in report_metrics}
         }
+
+        if mdata:
+            record = select_fields(mdata, record)
         write_records(metric_name, [record])
 
 
@@ -192,7 +197,17 @@ def write_metrics_state(atx, metric, date_to_resume):
     atx.write_state()
 
 
-def sync_metrics(atx, metric_name):
+def sync_metrics(atx, metric_name, mdata=None):
+    if mdata is None:
+        mdata = {}
+        catalog = getattr(atx, 'catalog', None)
+        streams = getattr(catalog, 'streams', None) if catalog is not None else None
+        if streams is not None:
+            for stream in streams:
+                if getattr(stream, 'tap_stream_id', None) == metric_name:
+                    mdata = singer.metadata.to_map(stream.metadata)
+                    break
+
     bookmark = atx.state.get('bookmarks', {}).get(metric_name, {})
     LOGGER.info('metric: {} '.format(metric_name))
 
@@ -229,7 +244,7 @@ def sync_metrics(atx, metric_name):
         LOGGER.info('ut_current_date: {} '.format(ut_current_date))
         ut_next_date = int(next_date.timestamp())
         LOGGER.info('ut_next_date: {} '.format(ut_next_date))
-        sync_metric(atx, metric_name, ut_current_date, ut_next_date)
+        sync_metric(atx, metric_name, ut_current_date, ut_next_date, mdata)
         # if the prior sync is successful it will write the date_to_resume bookmark
         write_metrics_state(atx, metric_name, next_date)
         current_date = next_date
