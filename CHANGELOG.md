@@ -1,7 +1,8 @@
 # Changelog
 
-## 2.3.0
+## 3.0.0
   * Upgrade `singer-python` to `6.8.0` and `requests` to `2.33.0`
+  * Schema Update. [#39](https://github.com/singer-io/tap-frontapp/pull/39)
 
 ## 2.2.0
   * Upgraded dependencies versions and added unit tests [#38](https://github.com/singer-io/tap-frontapp/pull/38)
