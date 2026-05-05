@@ -42,8 +42,9 @@ class TestFrontAppClient(unittest.TestCase):
         response = client.get_report_metrics("https://api2.frontapp.com/analytics/reports/xyz")
         self.assertEqual(response, [{"id": "m1"}])
 
+    @patch("tap_frontapp.http.RETRY_RATE_LIMIT", 0)
     @patch("requests.request")
-    def test_rate_limit_429(self, mock_request):
+    def test_rate_limit_429(self, mock_request, *_):
         mock_request.return_value = get_mock_response(
             status_code=429,
             headers={"X-Ratelimit-Remaining": "0", "X-Ratelimit-Reset": "999"},
