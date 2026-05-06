@@ -184,6 +184,7 @@ def sync_metric(atx, metric_name, start_date, end_date, mdata=None):
             "analytics_range": 'daily',
             "metric_id": metric_id,
             "metric_description": metric_description,
+            **{metric: None for metric in FRONT_REPORT_API_AVAILABLE_METRICS},
             **{report_metric["id"]: report_metric["value"] for report_metric in report_metrics}
         }
 
