@@ -2,9 +2,8 @@
 from base import FrontAppBaseTest
 from tap_tester.base_suite_tests.all_fields_test import AllFieldsTest
 
-# Fields that exist in the schema but may not be returned by the FrontApp API
-# in all test environments. The Front API only returns metrics that have data
-# for a given entity, so metric fields are conditionally absent from records.
+# Metric fields that the Front API returns conditionally — only when an entity
+# has activity data for that metric. They may be present or absent in any record.
 _METRIC_FIELDS = {
     "avg_first_response_time",
     "avg_handle_time",
@@ -27,21 +26,20 @@ _METRIC_FIELDS = {
     "num_workload_segments",
 }
 
-KNOWN_MISSING_FIELDS = {
-    "accounts_table": _METRIC_FIELDS,
-    "channels_table": _METRIC_FIELDS,
-    "inboxes_table": _METRIC_FIELDS,
-    "tags_table": _METRIC_FIELDS,
-    "teammates_table": _METRIC_FIELDS,
-    "teams_table": _METRIC_FIELDS,
+# All streams that contain conditional metric fields
+_METRIC_STREAMS = {
+    "accounts_table",
+    "channels_table",
+    "inboxes_table",
+    "tags_table",
+    "teammates_table",
+    "teams_table",
 }
 
 
 class FrontAppAllFields(AllFieldsTest, FrontAppBaseTest):
     """Ensure running the tap with all streams and fields selected results in
     the replication of all fields."""
-
-    MISSING_FIELDS = KNOWN_MISSING_FIELDS
 
     @staticmethod
     def name():
@@ -53,3 +51,22 @@ class FrontAppAllFields(AllFieldsTest, FrontAppBaseTest):
         # in this FrontApp account
         streams_to_exclude = {"channels_table", "inboxes_table"}
         return self.expected_stream_names().difference(streams_to_exclude)
+
+    def test_all_fields_for_streams_are_replicated(self):
+        """Override to handle metric fields that the Front API returns conditionally.
+        The Front API only includes a metric in the response when the entity has
+        activity data for that metric, so metric fields may be present or absent
+        in any given record. Metric fields are excluded from both sides of the
+        assertion so the test validates all structural fields without being
+        affected by the variable presence of metric data."""
+        for stream in self.test_streams:
+            with self.subTest(stream=stream):
+                conditional_fields = _METRIC_FIELDS if stream in _METRIC_STREAMS else set()
+
+                expected_all_keys = self.selected_fields.get(stream, set()) - conditional_fields
+                fields_replicated = self.actual_fields.get(stream, set()) - conditional_fields
+
+                self.assertSetEqual(
+                    fields_replicated,
+                    expected_all_keys,
+                )
