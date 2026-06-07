@@ -27,6 +27,8 @@ class FrontAppBaseTest(BaseCase):
     in tap-tester tests. Shared tap-specific methods (as needed).
     """
 
+    IS_FORBIDDEN_STREAM = "is_forbidden_stream"
+
     @staticmethod
     def tap_name():
         """The name of the tap."""
