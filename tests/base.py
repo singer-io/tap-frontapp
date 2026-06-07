@@ -110,6 +110,14 @@ class FrontAppBaseTest(BaseCase):
             },
         }
 
+    def expected_stream_names(self):
+        """The expected stream names and exclude forbidden streams."""
+        return {
+            stream_name
+            for stream_name, metadata in self.expected_metadata().items()
+            if not metadata.get(self.IS_FORBIDDEN_STREAM, False)
+        }
+
     def get_bookmark_value(self, state, stream):
         """Return the effective bookmark value for a stream.
 

@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.1.0
+  * Streams the credentials cannot access (403) are now excluded from the catalog during discovery instead of raising an error.
+  * Added unit tests for stream exclusion during discovery.
+
 ## 3.0.0
   * Upgrade `singer-python` to `6.8.0` and `requests` to `2.33.0`
   * Schema Update. [#39](https://github.com/singer-io/tap-frontapp/pull/39)

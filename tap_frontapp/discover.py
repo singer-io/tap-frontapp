@@ -5,9 +5,71 @@ import requests
 import singer
 from singer import metadata
 from singer.catalog import Catalog, CatalogEntry, Schema
-from .schemas import get_schemas
+from .schemas import get_schemas, STATIC_SCHEMA_STREAM_IDS
+from .http import FrontappForbiddenError
 
 LOGGER = singer.get_logger()
+
+# API endpoints for each stream (used for access checks)
+STREAM_API_PATHS = {
+    'accounts_table': '/accounts',
+    'channels_table': '/channels',
+    'inboxes_table': '/inboxes',
+    'tags_table': '/tags',
+    'teammates_table': '/teammates',
+    'teams_table': '/teams',
+}
+
+
+def _check_stream_access(client, stream_name):
+    """
+    Probe a stream's API endpoint for read access.
+    Returns True if accessible, False if a 403 Forbidden error is raised.
+    """
+    path = STREAM_API_PATHS.get(stream_name)
+    if path is None:
+        return True
+
+    try:
+        url = client.url(path)
+        client.request('get', url)
+        return True
+    except FrontappForbiddenError:
+        LOGGER.warning(
+            "Stream '%s' does not have read permission, excluding from catalog.",
+            stream_name,
+        )
+        return False
+
+
+def _apply_access_checks(client, schemas, field_metadata):
+    """
+    Probe each stream for read access and remove inaccessible streams
+    from schemas and field_metadata in place.
+    Raises FrontappForbiddenError if no streams are accessible.
+    """
+    inaccessible_streams = [
+        stream_name
+        for stream_name in list(schemas.keys())
+        if not _check_stream_access(client, stream_name)
+    ]
+
+    for stream_name in inaccessible_streams:
+        schemas.pop(stream_name, None)
+        field_metadata.pop(stream_name, None)
+
+    if inaccessible_streams:
+        total_streams = len(STATIC_SCHEMA_STREAM_IDS)
+        if len(inaccessible_streams) == total_streams:
+            raise FrontappForbiddenError(
+                "HTTP-error-code: 403, Error: The account credentials supplied do not have 'read' access to any "
+                "of the streams supported by the tap. Data collection cannot be initiated due to lack of permissions."
+            )
+        LOGGER.warning(
+            "The account credentials supplied do not have 'read' access to the following stream(s): %s. "
+            "These streams have been excluded from the catalog.",
+            ", ".join(inaccessible_streams),
+        )
 
 
 def validate_credentials(token):
@@ -25,10 +87,17 @@ def validate_credentials(token):
         sys.exit(1)
 
 
-def discover():
-    """Run the discovery mode, prepare the catalog file and return the catalog."""
+def discover(client=None):
+    """Run the discovery mode, prepare the catalog file and return the catalog.
+
+    If a client is provided, access to each stream is verified and streams
+    the credentials cannot read are excluded from the returned catalog.
+    """
     schemas, field_metadata = get_schemas()
     LOGGER.info("Schemas loaded: %s", list(schemas.keys()))
+
+    if client is not None:
+        _apply_access_checks(client, schemas, field_metadata)
 
     catalog = Catalog([])
 

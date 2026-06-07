@@ -11,6 +11,7 @@ from .context import Context
 from . import schemas
 from .discover import discover as _discover_impl, validate_credentials as _validate_credentials_impl
 from .sync import sync as _sync_impl
+from .http import Client
 
 REQUIRED_CONFIG_KEYS = ["token"]
 LOGGER = singer.get_logger()
@@ -65,7 +66,8 @@ def main():
 
     if args.discover:
         validate_credentials(args.config["token"])
-        catalog = discover()
+        client = Client(args.config)
+        catalog = discover(client)
         json.dump(catalog.to_dict(), sys.stdout, indent=2)
     else:
         atx = Context(args.config, args.state)
