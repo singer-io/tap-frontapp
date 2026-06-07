@@ -1,7 +1,7 @@
 # Changelog
 
 ## 3.1.0
-  * Exclude Streams that the credentials cannot access (403) from the catalog during discovery; discovery fails only if the credentials cannot read any supported parent stream.[#42](https://github.com/singer-io/tap-frontapp/pull/42)
+  * Exclude Streams that the credentials cannot access (403) from the catalog during discovery; discovery fails only if the credentials cannot read any supported parent stream. [#42](https://github.com/singer-io/tap-frontapp/pull/42)
 
 ## 3.0.0
   * Upgrade `singer-python` to `6.8.0` and `requests` to `2.33.0`
