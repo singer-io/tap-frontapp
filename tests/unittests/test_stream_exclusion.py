@@ -8,8 +8,8 @@ from tap_frontapp.discover import (
     discover,
     _check_stream_access,
     _apply_access_checks,
-    STREAM_API_PATHS,
 )
+from tap_frontapp.streams import METRIC_API_PATH
 from tap_frontapp.schemas import STATIC_SCHEMA_STREAM_IDS
 
 
@@ -38,7 +38,7 @@ class TestCheckStreamAccess(unittest.TestCase):
         self.assertFalse(result)
 
     def test_unknown_stream_returns_true(self):
-        """Test that a stream not in STREAM_API_PATHS returns True."""
+        """Test that a stream not in METRIC_API_PATH returns True."""
         mock_client = MagicMock()
         result = _check_stream_access(mock_client, "unknown_stream")
         self.assertTrue(result)
@@ -47,7 +47,7 @@ class TestCheckStreamAccess(unittest.TestCase):
     def test_all_known_streams_have_paths(self):
         """Test that all static schema streams have API paths defined."""
         for stream_id in STATIC_SCHEMA_STREAM_IDS:
-            self.assertIn(stream_id, STREAM_API_PATHS)
+            self.assertIn(stream_id, METRIC_API_PATH)
 
 
 class TestApplyAccessChecks(unittest.TestCase):

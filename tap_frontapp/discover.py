@@ -7,18 +7,9 @@ from singer import metadata
 from singer.catalog import Catalog, CatalogEntry, Schema
 from .schemas import get_schemas, STATIC_SCHEMA_STREAM_IDS
 from .http import FrontappForbiddenError
+from .streams import METRIC_API_PATH
 
 LOGGER = singer.get_logger()
-
-# API endpoints for each stream (used for access checks)
-STREAM_API_PATHS = {
-    'accounts_table': '/accounts',
-    'channels_table': '/channels',
-    'inboxes_table': '/inboxes',
-    'tags_table': '/tags',
-    'teammates_table': '/teammates',
-    'teams_table': '/teams',
-}
 
 
 def _check_stream_access(client, stream_name):
@@ -26,7 +17,7 @@ def _check_stream_access(client, stream_name):
     Probe a stream's API endpoint for read access.
     Returns True if accessible, False if a 403 Forbidden error is raised.
     """
-    path = STREAM_API_PATHS.get(stream_name)
+    path = METRIC_API_PATH.get(stream_name)
     if path is None:
         return True
 
