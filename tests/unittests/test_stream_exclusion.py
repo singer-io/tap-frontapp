@@ -1,7 +1,7 @@
 """Unit tests for stream exclusion during discovery (403 handling)."""
 
 import unittest
-from unittest.mock import MagicMock, patch, call
+from unittest.mock import MagicMock, patch
 
 from tap_frontapp.http import FrontappForbiddenError, Client
 from tap_frontapp.discover import (
