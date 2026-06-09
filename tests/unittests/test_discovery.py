@@ -97,9 +97,11 @@ class TestValidateCredentials(unittest.TestCase):
 class TestDiscover(unittest.TestCase):
     """Tests for discover function."""
 
-    def test_discover_returns_catalog_with_all_streams(self):
+    @patch("tap_frontapp.discover._apply_access_checks")
+    def test_discover_returns_catalog_with_all_streams(self, mock_access):
         """Test that discover() returns a catalog containing all static streams."""
-        catalog = discover()
+        mock_client = MagicMock()
+        catalog = discover(mock_client)
 
         stream_ids = {entry.tap_stream_id for entry in catalog.streams}
         expected = {
@@ -112,10 +114,12 @@ class TestDiscover(unittest.TestCase):
         }
         self.assertEqual(stream_ids, expected)
 
-    def test_discover_returns_catalog_with_correct_key_properties(self):
+    @patch("tap_frontapp.discover._apply_access_checks")
+    def test_discover_returns_catalog_with_correct_key_properties(self, mock_access):
         """Test that each catalog entry has the correct key properties."""
         expected_pks = ["analytics_date", "analytics_range", "report_id", "metric_id"]
-        catalog = discover()
+        mock_client = MagicMock()
+        catalog = discover(mock_client)
 
         for entry in catalog.streams:
             self.assertEqual(
@@ -124,16 +128,20 @@ class TestDiscover(unittest.TestCase):
                 f"Stream '{entry.tap_stream_id}' has unexpected key_properties",
             )
 
-    def test_discover_catalog_entries_have_schema(self):
+    @patch("tap_frontapp.discover._apply_access_checks")
+    def test_discover_catalog_entries_have_schema(self, mock_access):
         """Test that each catalog entry has a non-empty schema."""
-        catalog = discover()
+        mock_client = MagicMock()
+        catalog = discover(mock_client)
 
         for entry in catalog.streams:
             self.assertIsNotNone(entry.schema, f"Stream '{entry.tap_stream_id}' has no schema")
 
-    def test_discover_catalog_entries_have_metadata(self):
+    @patch("tap_frontapp.discover._apply_access_checks")
+    def test_discover_catalog_entries_have_metadata(self, mock_access):
         """Test that each catalog entry has metadata list."""
-        catalog = discover()
+        mock_client = MagicMock()
+        catalog = discover(mock_client)
 
         for entry in catalog.streams:
             self.assertIsInstance(
@@ -143,15 +151,18 @@ class TestDiscover(unittest.TestCase):
                 len(entry.metadata), 0, f"Stream '{entry.tap_stream_id}' has empty metadata"
             )
 
-    def test_discover_catalog_entry_stream_id_matches_stream(self):
+    @patch("tap_frontapp.discover._apply_access_checks")
+    def test_discover_catalog_entry_stream_id_matches_stream(self, mock_access):
         """Test that tap_stream_id equals stream name for all entries."""
-        catalog = discover()
+        mock_client = MagicMock()
+        catalog = discover(mock_client)
 
         for entry in catalog.streams:
             self.assertEqual(entry.tap_stream_id, entry.stream)
 
+    @patch("tap_frontapp.discover._apply_access_checks")
     @patch("tap_frontapp.discover.get_schemas")
-    def test_discover_raises_on_invalid_schema(self, mock_get_schemas):
+    def test_discover_raises_on_invalid_schema(self, mock_get_schemas, mock_access):
         """Test that discover succeeds with a lenient schema dict."""
         from singer import metadata as md
         bad_mdata = md.new()
@@ -161,19 +172,22 @@ class TestDiscover(unittest.TestCase):
             {"bad_stream": bad_mdata},
         )
 
-        catalog = discover()
+        mock_client = MagicMock()
+        catalog = discover(mock_client)
         self.assertEqual(len(catalog.streams), 1)
 
+    @patch("tap_frontapp.discover._apply_access_checks")
     @patch("tap_frontapp.discover.get_schemas")
-    def test_discover_raises_when_metadata_missing_for_stream(self, mock_get_schemas):
+    def test_discover_raises_when_metadata_missing_for_stream(self, mock_get_schemas, mock_access):
         """Test that discover raises and logs when metadata lookup fails (covers except block)."""
         mock_get_schemas.return_value = (
             {"stream_a": {"type": "object", "properties": {}}},
             {},  # No metadata for stream_a triggers KeyError caught by except block
         )
 
+        mock_client = MagicMock()
         with self.assertRaises(Exception):
-            discover()
+            discover(mock_client)
 
 
 class TestCheckStreamAccess(unittest.TestCase):
@@ -305,27 +319,17 @@ class TestApplyAccessChecks(unittest.TestCase):
 
 
 class TestDiscoverWithClient(unittest.TestCase):
-    """Tests for discover() function with client parameter."""
+    """Tests for discover() function with access checks."""
 
     @patch("tap_frontapp.discover._apply_access_checks")
-    def test_discover_with_client_calls_access_checks(self, mock_access):
-        """Test that discover() calls _apply_access_checks when client is provided."""
+    def test_discover_calls_access_checks(self, mock_access):
+        """Test that discover() calls _apply_access_checks."""
         mock_client = MagicMock()
         catalog = discover(mock_client)
 
         mock_access.assert_called_once()
         args = mock_access.call_args[0]
         self.assertEqual(args[0], mock_client)
-
-    def test_discover_without_client_skips_access_checks(self):
-        """Test that discover() without client does not perform access checks."""
-        with patch("tap_frontapp.discover._apply_access_checks") as mock_access:
-            catalog = discover()
-            mock_access.assert_not_called()
-
-        # Should still return all streams
-        stream_ids = {entry.tap_stream_id for entry in catalog.streams}
-        self.assertEqual(stream_ids, set(STATIC_SCHEMA_STREAM_IDS))
 
     @patch("tap_frontapp.discover._check_stream_access")
     def test_discover_excludes_forbidden_from_catalog(self, mock_check):

@@ -78,17 +78,16 @@ def validate_credentials(token):
         sys.exit(1)
 
 
-def discover(client=None):
+def discover(client):
     """Run the discovery mode, prepare the catalog file and return the catalog.
 
-    If a client is provided, access to each stream is verified and streams
+    Access to each stream is verified using the provided client and streams
     the credentials cannot read are excluded from the returned catalog.
     """
     schemas, field_metadata = get_schemas()
     LOGGER.info("Schemas loaded: %s", list(schemas.keys()))
 
-    if client is not None:
-        _apply_access_checks(client, schemas, field_metadata)
+    _apply_access_checks(client, schemas, field_metadata)
 
     catalog = Catalog([])
 

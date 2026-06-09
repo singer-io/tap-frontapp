@@ -76,7 +76,7 @@ def main():
         if catalog_obj is None:
             catalog_obj = getattr(args, "catalog", None)
         if catalog_obj is None:
-            catalog_obj = discover()
+            catalog_obj = discover(atx.client)
         elif isinstance(catalog_obj, dict):
             catalog_obj = Catalog.from_dict(catalog_obj)
 
