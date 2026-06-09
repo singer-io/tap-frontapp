@@ -374,7 +374,3 @@ class TestFrontappForbiddenErrorInClient(unittest.TestCase):
         client = Client(config={"token": "test-token"})
         with self.assertRaises(FrontappForbiddenError):
             client.request('get', "https://api2.frontapp.com/accounts")
-
-
-if __name__ == "__main__":
-    unittest.main()
