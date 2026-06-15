@@ -25,19 +25,23 @@ def _check_stream_access(client, stream_name):
         url = client.url(path)
         client.request('get', url)
         return True
-    except FrontappForbiddenError:
+    except FrontappForbiddenError as exc:
         LOGGER.warning(
-            "Stream '%s' does not have read permission, excluding from catalog.",
+            "Stream '%s' does not have read permission, excluding from catalog. Detail: %s",
             stream_name,
+            str(exc),
         )
         return False
 
 
-def _apply_access_checks(client, schemas, field_metadata):
+def _apply_access_checks(client, schemas: dict, field_metadata: dict) -> None:
     """
     Probe each stream for read access and remove inaccessible streams
     from schemas and field_metadata in place.
     Raises FrontappForbiddenError if no streams are accessible.
+
+    Note: No parent-child pruning is needed since tap-frontapp has no
+    parent-child stream relationships — all streams are independent.
     """
     inaccessible_streams = [
         stream_name
@@ -51,14 +55,12 @@ def _apply_access_checks(client, schemas, field_metadata):
 
     if not schemas:
         raise FrontappForbiddenError(
-            "HTTP-error-code: 403, Error: The account credentials supplied do not have 'read' access to any "
-            "of the streams supported by the tap. Data collection cannot be initiated due to lack of permissions."
+            "HTTP-error-code: 403, Error: Credentials lack read access to all supported streams."
         )
 
     if inaccessible_streams:
         LOGGER.warning(
-            "The account credentials supplied do not have 'read' access to the following stream(s): %s. "
-            "These streams have been excluded from the catalog.",
+            "These streams have been excluded due to 403 Forbidden: %s",
             ", ".join(inaccessible_streams),
         )
 
