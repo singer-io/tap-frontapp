@@ -299,7 +299,7 @@ class TestApplyAccessChecks(unittest.TestCase):
         with self.assertRaises(FrontappForbiddenError) as ctx:
             _apply_access_checks(mock_client, schemas, field_metadata)
 
-        self.assertIn("Credentials lack read access to all supported streams", str(ctx.exception))
+        self.assertIn("No streams are accessible", str(ctx.exception))
 
     @patch("tap_frontapp.discover._check_stream_access")
     def test_warning_logged_for_excluded_streams(self, mock_check):
@@ -315,7 +315,7 @@ class TestApplyAccessChecks(unittest.TestCase):
             _apply_access_checks(mock_client, schemas, field_metadata)
             mock_logger.warning.assert_called()
             warning_msg = mock_logger.warning.call_args[0][0]
-            self.assertIn("excluded due to 403 Forbidden", warning_msg)
+            self.assertIn("excluded due to HTTP-Error-Code:403 Forbidden", warning_msg)
 
 
 class TestDiscoverWithClient(unittest.TestCase):
