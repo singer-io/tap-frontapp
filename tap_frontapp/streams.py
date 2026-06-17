@@ -184,6 +184,7 @@ def sync_metric(atx, metric_name, start_date, end_date, mdata=None):
             "analytics_range": 'daily',
             "metric_id": metric_id,
             "metric_description": metric_description,
+            **{metric_key: None for metric_key in FRONT_REPORT_API_AVAILABLE_METRICS},
             **{report_metric["id"]: report_metric["value"] for report_metric in report_metrics}
         }
 
@@ -214,7 +215,7 @@ def sync_metrics(atx, metric_name, mdata=None):
     # start_date is defaulted in the config file 2018-01-01
     # if there's no default date and it gets set to now, then start_date will have to be
     #   set to the prior business day before we can use it.
-    now = datetime.datetime.now()
+    now = datetime.datetime.now(datetime.timezone.utc)
     s_d = now.replace(hour=0, minute=0, second=0, microsecond=0)
     default_start = (s_d + datetime.timedelta(days=-1, hours=0)).strftime("%Y-%m-%d %H:%M:%S")
     start_date = pendulum.parse(atx.config.get('start_date', default_start))

@@ -27,7 +27,7 @@ def _check_stream_access(client, stream_name):
         return True
     except FrontappForbiddenError as exc:
         LOGGER.warning(
-            "Stream '%s' does not have read permission, excluding from catalog. Detail: %s",
+            "Unauthorized Stream: %s, excluding from catalog. HTTP-Error-Message:'%s'",
             stream_name,
             str(exc),
         )
@@ -55,12 +55,12 @@ def _apply_access_checks(client, schemas: dict, field_metadata: dict) -> None:
 
     if not schemas:
         raise FrontappForbiddenError(
-            "HTTP-error-code: 403, Error: Credentials lack read access to all supported streams."
+            "No streams are accessible. Ensure the credentials have read permission for at least one stream."
         )
 
     if inaccessible_streams:
         LOGGER.warning(
-            "These streams have been excluded due to 403 Forbidden: %s",
+            "These streams have been excluded due to HTTP-Error-Code:403 Forbidden: %s",
             ", ".join(inaccessible_streams),
         )
 
