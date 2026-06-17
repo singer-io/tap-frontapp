@@ -70,18 +70,18 @@ def main():
         catalog = discover(client)
         json.dump(catalog.to_dict(), sys.stdout, indent=2)
     else:
-        atx = Context(args.config, args.state)
+        context = Context(args.config, args.state)
 
         catalog_obj = getattr(args, "properties", None)
         if catalog_obj is None:
             catalog_obj = getattr(args, "catalog", None)
         if catalog_obj is None:
-            catalog_obj = discover(atx.client)
+            catalog_obj = discover(context.client)
         elif isinstance(catalog_obj, dict):
             catalog_obj = Catalog.from_dict(catalog_obj)
 
-        atx.catalog = catalog_obj
-        sync(atx)
+        context.catalog = catalog_obj
+        sync(context)
 
 
 if __name__ == "__main__":

@@ -39,9 +39,6 @@ def _apply_access_checks(client, schemas: dict, field_metadata: dict) -> None:
     Probe each stream for read access and remove inaccessible streams
     from schemas and field_metadata in place.
     Raises FrontappForbiddenError if no streams are accessible.
-
-    Note: No parent-child pruning is needed since tap-frontapp has no
-    parent-child stream relationships — all streams are independent.
     """
     inaccessible_streams = [
         stream_name

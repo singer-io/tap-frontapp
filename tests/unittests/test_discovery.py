@@ -226,6 +226,30 @@ class TestCheckStreamAccess(unittest.TestCase):
         for stream_id in STATIC_SCHEMA_STREAM_IDS:
             self.assertIn(stream_id, METRIC_API_PATH)
 
+    def test_forbidden_stream_logs_warning_with_error_detail(self):
+        """Test that forbidden streams log warning including the HTTP error message."""
+        error_detail = "HTTP-error-code: 403, Error: Insufficient permissions"
+        mock_client = MagicMock()
+        mock_client.url.return_value = "https://api2.frontapp.com/accounts"
+        mock_client.request.side_effect = FrontappForbiddenError(error_detail)
+
+        with patch("tap_frontapp.discover.LOGGER") as mock_logger:
+            result = _check_stream_access(mock_client, "accounts_table")
+
+        self.assertFalse(result)
+        mock_logger.warning.assert_called_once()
+        
+        # Verify the warning message includes both stream name and error detail
+        warning_call_args = mock_logger.warning.call_args
+        warning_format = warning_call_args[0][0]
+        stream_arg = warning_call_args[0][1]
+        error_arg = warning_call_args[0][2]
+        
+        self.assertEqual(stream_arg, "accounts_table")
+        self.assertEqual(error_arg, error_detail)
+        self.assertIn("Unauthorized Stream", warning_format)
+        self.assertIn("HTTP-Error-Message", warning_format)
+
 
 class TestApplyAccessChecks(unittest.TestCase):
     """Tests for _apply_access_checks function."""

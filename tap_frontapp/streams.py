@@ -215,7 +215,7 @@ def sync_metrics(atx, metric_name, mdata=None):
     # start_date is defaulted in the config file 2018-01-01
     # if there's no default date and it gets set to now, then start_date will have to be
     #   set to the prior business day before we can use it.
-    now = datetime.datetime.now(datetime.timezone.utc)
+    now = datetime.datetime.now()
     s_d = now.replace(hour=0, minute=0, second=0, microsecond=0)
     default_start = (s_d + datetime.timedelta(days=-1, hours=0)).strftime("%Y-%m-%d %H:%M:%S")
     start_date = pendulum.parse(atx.config.get('start_date', default_start))
