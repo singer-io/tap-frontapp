@@ -326,6 +326,21 @@ class TestApplyAccessChecks(unittest.TestCase):
         self.assertIn("No streams are accessible", str(ctx.exception))
 
     @patch("tap_frontapp.discover._check_stream_access")
+    def test_all_streams_forbidden_error_message(self, mock_check):
+        """Test exact error message when all streams are forbidden."""
+        mock_check.return_value = False
+        mock_client = MagicMock()
+        schemas, field_metadata = self._make_schemas_and_metadata(STATIC_SCHEMA_STREAM_IDS)
+
+        with self.assertRaises(FrontappForbiddenError) as ctx:
+            _apply_access_checks(mock_client, schemas, field_metadata)
+
+        self.assertEqual(
+            str(ctx.exception),
+            "No streams are accessible. Ensure the credentials have read permission for at least one stream.",
+        )
+
+    @patch("tap_frontapp.discover._check_stream_access")
     def test_warning_logged_for_excluded_streams(self, mock_check):
         """Test that a warning is logged when some streams are excluded."""
         def side_effect(client, stream_name):
@@ -340,6 +355,32 @@ class TestApplyAccessChecks(unittest.TestCase):
             mock_logger.warning.assert_called()
             warning_msg = mock_logger.warning.call_args[0][0]
             self.assertIn("excluded due to HTTP-Error-Code:403 Forbidden", warning_msg)
+
+    @patch("tap_frontapp.discover._check_stream_access")
+    def test_excluded_streams_warning_contains_stream_names(self, mock_check):
+        """Test that warning message lists all excluded stream names."""
+        excluded = {"accounts_table", "tags_table"}
+
+        def side_effect(client, stream_name):
+            return stream_name not in excluded
+
+        mock_check.side_effect = side_effect
+        mock_client = MagicMock()
+        schemas, field_metadata = self._make_schemas_and_metadata(STATIC_SCHEMA_STREAM_IDS)
+
+        with patch("tap_frontapp.discover.LOGGER") as mock_logger:
+            _apply_access_checks(mock_client, schemas, field_metadata)
+
+            warning_call_args = mock_logger.warning.call_args
+            warning_format = warning_call_args[0][0]
+            stream_names_arg = warning_call_args[0][1]
+
+            self.assertEqual(
+                warning_format,
+                "These streams have been excluded due to HTTP-Error-Code:403 Forbidden: %s",
+            )
+            for stream_name in excluded:
+                self.assertIn(stream_name, stream_names_arg)
 
 
 class TestDiscoverWithClient(unittest.TestCase):
