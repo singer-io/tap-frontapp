@@ -19,6 +19,11 @@ class MetricsRateLimitException(Exception):
     pass
 
 
+class FrontappForbiddenError(Exception):
+    """Raised when the API returns HTTP 403 Forbidden."""
+    pass
+
+
 class Client(object):
     BASE_URL = 'https://api2.frontapp.com'
 
@@ -84,6 +89,10 @@ class Client(object):
                 raise RateLimitException(response.text)
             if response.status_code == 423:
                 raise MetricsRateLimitException()
+            if response.status_code == 403:
+                raise FrontappForbiddenError(
+                    f"HTTP-error-code: 403, Error: {response.text}"
+                )
             try:
                 response.raise_for_status()
             except:

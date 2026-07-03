@@ -27,6 +27,8 @@ class FrontAppBaseTest(BaseCase):
     in tap-tester tests. Shared tap-specific methods (as needed).
     """
 
+    IS_FORBIDDEN_STREAM = "is_forbidden_stream"
+
     @staticmethod
     def tap_name():
         """The name of the tap."""
@@ -108,6 +110,14 @@ class FrontAppBaseTest(BaseCase):
                 cls.OBEYS_START_DATE: True,
                 cls.API_LIMIT: 1,
             },
+        }
+
+    def expected_stream_names(self):
+        """Return the expected stream names, excluding forbidden streams."""
+        return {
+            stream_name
+            for stream_name, metadata in self.expected_metadata().items()
+            if not metadata.get(self.IS_FORBIDDEN_STREAM, False)
         }
 
     def get_bookmark_value(self, state, stream):
